@@ -1,0 +1,6 @@
+{
+  "name": "Diary Notebook",
+  "description": "A digital diary application with camera capture, GPS tracking, and automatic geocoding.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
