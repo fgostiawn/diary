@@ -2,13 +2,20 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Book of Us</title>
-<meta name="description" content="Scrapbook kenangan berdua bernuansa putih-biru.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Serif+Display:ital@0;1&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
-<style>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<!--page-->
+<title>The Book of Us</title><meta name="claude:viewport-fit-sides" content="cover"><meta name="description" content="Scrapbook kenangan berdua bernuansa putih-biru."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&amp;family=DM+Serif+Display:ital@0;1&amp;family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet"><script type="application/json" id="sharedBook">null</script><script id="app">
+(() => {
+  "use strict";
+  // The page's own source, kept so sharing can save a new version of this page.
+  const SRC = document.currentScript ? document.currentScript.textContent : "";
+  const RESET = ((document.head && document.head.querySelector("style")) || {}).textContent || "";
+  const PAGE_HEAD = '<title>The Book of Us</title><meta name="claude:viewport-fit-sides" content="cover"><meta name="description" content="Scrapbook kenangan berdua bernuansa putih-biru."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&amp;family=DM+Serif+Display:ital@0;1&amp;family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">';
+  const SHARE_URL = "https://claude.ai/artifact/7bhWTgRL6xhBVE5iTsFrqn";
+
+  const CSS = String.raw`
   /* Scrapbook on blue dotted paper: white photo prints, washi tape, blue ink doodles. */
   :root {
     color-scheme: light;
@@ -359,7 +366,7 @@
   @page { size: 148mm 210mm; margin: 0; }
   @media print {
     body { background: #fff; }
-    .topbar, .sky, .sheet-bar, .add-wrap, .modal, .toast, .fab, .burst, .slot .tools { display: none !important; }
+    .topbar, .sky, .envelope, .view-end, .sheet-bar, .add-wrap, .modal, .toast, .fab, .burst, .slot .tools { display: none !important; }
     .book { display: block; margin: 0; padding: 0; max-width: none; }
     .sheet { display: block; break-after: page; page-break-after: always; animation: none; }
     .sheet:last-child { break-after: auto; page-break-after: auto; }
@@ -368,10 +375,57 @@
     [data-text]:empty::before { content: ""; }
     *, *::before, *::after { animation: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
-</style>
-</head>
-<body>
 
+  [hidden] { display: none !important; }
+
+  /* ---------- Finished-book view (what the partner sees) ---------- */
+  body.viewing .actions, body.viewing #btnBulk, body.viewing .add-wrap,
+  body.viewing .sheet-bar, body.viewing .slot .tools { display: none !important; }
+  body.viewing .topbar { justify-content: center; }
+  body.viewing .brand { margin: 0; }
+  body.viewing .book { grid-template-columns: minmax(0, 480px); justify-content: center; gap: 56px; margin-top: 36px; }
+  body.viewing [data-text]:hover, body.viewing [data-text]:focus { background: none; }
+  body.viewing [data-text]:empty::before { content: ""; }
+  body.viewing .frame:has(.slot:not(.filled)) { visibility: hidden; }
+  body.viewing .slot { cursor: default; }
+  body.viewing .frame:hover { transform: rotate(var(--r, 0deg)) scale(1.02); }
+  body.viewing .sheet .page { transition: transform .9s cubic-bezier(.2, 1.3, .4, 1); }
+  body.viewing .sheet:not(.in) .page { transform: translateY(34px) scale(.95) rotate(-2deg); }
+  .view-end { position: relative; z-index: 1; text-align: center; padding: 8px 16px 72px; font-family: var(--hand); font-size: 30px; color: var(--blue-deep); }
+  .view-end svg { display: block; margin: 0 auto 6px; width: 34px; height: 34px; color: var(--blue); animation: beat 1.6s ease-in-out infinite; }
+
+  /* opening card */
+  .envelope {
+    position: fixed; inset: 0; z-index: 80; display: flex; align-items: center; justify-content: center; padding: 24px;
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--dot) 1.2px, transparent 1.4px);
+    background-size: 22px 22px;
+  }
+  .envelope.opening { animation: liftAway .8s ease-in forwards; }
+  .env-card {
+    position: relative; width: min(340px, 100%); background: var(--paper); padding: 40px 28px 30px; text-align: center;
+    box-shadow: var(--shadow); transform: rotate(-2deg); animation: pop .7s cubic-bezier(.2, 1.4, .4, 1) both;
+  }
+  .env-card::before {
+    content: ""; position: absolute; top: -12px; left: 50%; width: 110px; height: 26px; transform: translateX(-50%) rotate(3deg);
+    background: repeating-linear-gradient(45deg, var(--tape-a) 0 8px, var(--tape-b) 8px 16px);
+  }
+  .env-card svg { width: 72px; height: 72px; color: var(--blue); animation: beat 1.6s ease-in-out infinite; }
+  .env-hi { margin: 10px 0 2px; font-family: var(--hand); font-weight: 700; font-size: 40px; line-height: 1; color: var(--blue-deep); }
+  .env-sub { margin: 0 0 22px; font-family: var(--hand); font-size: 22px; color: var(--ink-soft); }
+  .env-open { font-size: 16px; padding: 12px 28px; animation: bob 2.6s ease-in-out infinite; }
+
+  .fab.back { background: #fff; color: var(--blue-deep); border: 1px solid var(--line); }
+  .fab.back:hover { background: var(--sky-2); }
+
+  .share-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .share-row input {
+    flex: 1 1 200px; min-width: 0; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line);
+    font: 600 13px var(--ui); color: var(--ink); background: var(--sky-2);
+  }
+  @keyframes liftAway { to { opacity: 0; transform: translateY(-40px) scale(1.04); } }
+`;
+  const MARKUP = String.raw`
 <div class="sky" aria-hidden="true">
   <svg style="left:4%;top:18%;width:34px;animation-delay:-2s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>
   <svg style="right:5%;top:30%;width:28px;animation-delay:-5s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.6 5.7 21l2.3-7.2-6-4.6h7.6z"/></svg>
@@ -389,11 +443,15 @@
     <button class="btn local-only" id="btnBackup" title="Unduh cadangan (.json)">Cadangan</button>
     <button class="btn" id="btnRestore" title="Buka cadangan (.json)">Buka</button>
     <button class="btn" id="btnReset" title="Kembalikan ke template awal">Reset</button>
+    <button class="btn" id="btnPreview" title="Lihat buku seperti yang dilihat pasanganmu">Lihat hasil</button>
+    <button class="btn primary" id="btnShare" hidden>Bagikan ♡</button>
     <button class="btn primary local-only" id="btnPrint">Simpan PDF</button>
   </div>
 </header>
 
 <main class="book" id="book"></main>
+
+<div class="view-end" id="viewEnd" hidden><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>selamanya, kita</div>
 
 <div class="add-wrap"><button class="add-card" id="btnAdd">+ halaman baru</button></div>
 
@@ -401,6 +459,26 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/></svg>
   Tambah foto
 </button>
+
+<button class="fab back" id="btnBackEdit" hidden>✎ Kembali edit</button>
+
+<div class="envelope" id="envelope" hidden>
+  <div class="env-card">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>
+    <p class="env-hi">untukmu</p>
+    <p class="env-sub">sebuah buku kecil tentang kita</p>
+    <button class="btn primary env-open" id="btnOpen">buka ♡</button>
+  </div>
+</div>
+
+<div class="modal" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+  <div class="modal-box confirm-box">
+    <h2 id="shareTitle">Bukunya sudah siap ♡</h2>
+    <p>Kirim link ini ke pasanganmu. Dia akan melihat buku kalian yang sudah jadi, tanpa tombol edit.</p>
+    <div class="share-row"><input id="shareLink" readonly aria-label="Link buku"><button class="btn primary" id="btnCopy">Salin</button></div>
+    <div class="modal-foot"><button class="btn" id="shareClose">Tutup</button></div>
+  </div>
+</div>
 
 <div class="modal" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmMsg">
   <div class="modal-box confirm-box">
@@ -423,9 +501,11 @@
 <input type="file" id="restoreInput" accept="application/json,.json" hidden>
 <div class="toast" id="toast"></div>
 
-<script>
-(() => {
-  "use strict";
+`;
+  const styleEl = document.createElement("style");
+  styleEl.textContent = CSS;
+  document.head.appendChild(styleEl);
+  document.body.insertAdjacentHTML("beforeend", MARKUP);
 
   /* ================= Templates ================= */
   const HEART_PATH = "M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z";
@@ -559,9 +639,30 @@
   let state = freshBook();
   const book = document.getElementById("book");
 
+  // "edit": the editor on this device. "view": the finished book, read-only.
+  let mode = "edit", viewBook = null;
+  const shown = () => (mode === "view" && viewBook ? viewBook : state);
+
   function render() {
     book.innerHTML = "";
-    state.pages.forEach((p, i) => book.appendChild(renderSheet(p, i)));
+    shown().pages.forEach((p, i) => book.appendChild(renderSheet(p, i)));
+    if (mode === "view") revealOnScroll();
+  }
+
+  function revealOnScroll() {
+    const sheets = [...book.querySelectorAll(".sheet")];
+    if (!("IntersectionObserver" in window)) { sheets.forEach(s => s.classList.add("in")); return; }
+    const io = new IntersectionObserver(entries => entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+    }), { threshold: .15 });
+    sheets.forEach(s => io.observe(s));
+  }
+
+  function setMode(m) {
+    mode = m;
+    document.body.classList.toggle("viewing", m === "view");
+    document.getElementById("viewEnd").hidden = m !== "view";
+    render();
   }
 
   function renderSheet(p, i) {
@@ -569,7 +670,7 @@
     const sheet = document.createElement("section");
     sheet.className = "sheet";
     sheet.dataset.id = p.id;
-    const last = state.pages.length - 1;
+    const last = shown().pages.length - 1;
     sheet.innerHTML = `
       <div class="sheet-bar">
         <span class="num">${i + 1}</span>
@@ -582,7 +683,7 @@
 
     sheet.querySelectorAll("[data-text]").forEach(el => {
       const k = el.dataset.text;
-      el.contentEditable = "true";
+      el.contentEditable = mode === "edit" ? "true" : "false";
       el.spellcheck = false;
       el.innerHTML = p.texts[k] ?? "";
       el.addEventListener("input", () => {
@@ -622,6 +723,7 @@
     const key = el.dataset.slot;
 
     el.addEventListener("click", e => {
+      if (mode !== "edit") return;
       setActive(el, p);
       const tool = e.target.closest("[data-tool]");
       if (tool) {
@@ -634,9 +736,10 @@
     });
 
     // drag & drop files
-    el.addEventListener("dragover", e => { e.preventDefault(); el.classList.add("dragover"); });
+    el.addEventListener("dragover", e => { if (mode !== "edit") return; e.preventDefault(); el.classList.add("dragover"); });
     el.addEventListener("dragleave", () => el.classList.remove("dragover"));
     el.addEventListener("drop", e => {
+      if (mode !== "edit") return;
       e.preventDefault(); el.classList.remove("dragover");
       const f = [...(e.dataTransfer.files || [])].find(f => f.type.startsWith("image/"));
       if (f) putImage(f, el, p);
@@ -645,7 +748,7 @@
     // pan to reposition (object-position)
     let start = null;
     el.addEventListener("pointerdown", e => {
-      if (!p.photos[key] || e.target.closest("[data-tool]")) return;
+      if (mode !== "edit" || !p.photos[key] || e.target.closest("[data-tool]")) return;
       // On touch, the first tap only selects the photo so the page can still scroll.
       if (e.pointerType !== "mouse" && !el.classList.contains("active")) return;
       setActive(el, p);
@@ -713,6 +816,7 @@
   // Paste image from clipboard -> active slot, or first empty slot
   const hasImage = dt => dt && [...dt.items].some(i => i.kind === "file" && i.type.startsWith("image/"));
   document.addEventListener("paste", e => {
+    if (mode !== "edit") return;
     const item = e.clipboardData && [...e.clipboardData.items].find(i => i.kind === "file" && i.type.startsWith("image/"));
     if (!item) return;
     e.preventDefault();
@@ -759,7 +863,7 @@
   document.getElementById("btnAdd").onclick = () => modal.classList.add("open");
   document.getElementById("tplClose").onclick = () => modal.classList.remove("open");
   modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("open"); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") { modal.classList.remove("open"); cModal.classList.contains("open") && document.getElementById("confirmNo").click(); } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { modal.classList.remove("open"); shareModal.classList.remove("open"); cModal.classList.contains("open") && document.getElementById("confirmNo").click(); } });
   tplGrid.addEventListener("click", e => {
     const b = e.target.closest("[data-tpl]");
     if (!b) return;
@@ -882,13 +986,147 @@
   }
 
   /* ================= Boot ================= */
+  /* ================= Sharing the finished book ================= */
+  // Only text formatting the editor itself produces survives; everything else becomes plain text.
+  function cleanHTML(html) {
+    const t = document.createElement("template");
+    t.innerHTML = String(html ?? "");
+    const walk = node => [...node.childNodes].forEach(c => {
+      if (c.nodeType === 1) {
+        if (!/^(BR|B|I|EM|STRONG|DIV|SPAN|P)$/.test(c.tagName)) { c.replaceWith(document.createTextNode(c.textContent)); return; }
+        [...c.attributes].forEach(a => c.removeAttribute(a.name));
+        walk(c);
+      } else if (c.nodeType !== 3) c.remove();
+    });
+    walk(t.content);
+    return t.innerHTML;
+  }
+  const okSrc = src => typeof src === "string" && (src.startsWith("/_blob/") || src.startsWith("data:image/"));
+  function cleanBook(b) {
+    const pages = (Array.isArray(b && b.pages) ? b.pages : []).filter(p => p && TEMPLATES[p.type]).map(p => {
+      const texts = {}, photos = {};
+      for (const k in (p.texts || {})) texts[k] = cleanHTML(p.texts[k]);
+      for (const k in (p.photos || {})) {
+        const ph = p.photos[k];
+        if (ph && okSrc(ph.src)) photos[k] = { src: ph.src, x: clamp(+ph.x || 50, 0, 100), y: clamp(+ph.y || 50, 0, 100) };
+      }
+      return { id: String(p.id || uid()), type: p.type, texts, photos };
+    });
+    return { v: 1, pages };
+  }
+
+  let SHARED = null;
+  try { SHARED = JSON.parse(document.getElementById("sharedBook").textContent); } catch { SHARED = null; }
+  if (SHARED) SHARED = cleanBook(SHARED);
+  if (SHARED && !SHARED.pages.length) SHARED = null;
+
+  const use = name => (window.claude && typeof window.claude.use === "function" ? window.claude.use(name).catch(() => null) : Promise.resolve(null));
+
+  const envelope = document.getElementById("envelope");
+  document.getElementById("btnOpen").onclick = () => {
+    envelope.classList.add("opening");
+    burst(document.querySelector(".env-card"));
+    setTimeout(() => { envelope.hidden = true; envelope.classList.remove("opening"); }, 800);
+  };
+
+  // Owner preview of the finished book, built from this device's copy.
+  const btnBackEdit = document.getElementById("btnBackEdit");
+  document.getElementById("btnPreview").onclick = () => {
+    viewBook = state; setMode("view"); btnBackEdit.hidden = false; window.scrollTo(0, 0);
+  };
+  btnBackEdit.onclick = () => { btnBackEdit.hidden = true; setMode("edit"); window.scrollTo(0, 0); };
+
+  function dataURLtoBlob(url) {
+    const [head, body] = url.split(",");
+    const type = (head.match(/data:([^;]+)/) || [])[1] || "image/jpeg";
+    const bin = atob(body), arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type });
+  }
+
+  // The page saves itself as a new version with the shared book embedded as data.
+  function buildDoc(shared) {
+    const json = JSON.stringify(shared).replace(/</g, "\\u003c");
+    return '<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'
+      + RESET + '</style></head><body>' + PAGE_HEAD
+      + '<script type="application/json" id="sharedBook">' + json + '<\/script>'
+      + '<script id="app">' + SRC + '<\/script></body></html>';
+  }
+
+  const btnShare = document.getElementById("btnShare");
+  btnShare.onclick = async () => {
+    const [artifact, assets] = await Promise.all([use("artifact"), use("assets")]);
+    if (!artifact || !assets || !SRC) { toast("Berbagi belum bisa dilakukan dari sini."); return; }
+    btnShare.disabled = true;
+    try {
+      const todo = [];
+      state.pages.forEach(p => Object.values(p.photos).forEach(ph => { if (ph && !ph.asset && !String(ph.src).startsWith("/_blob/")) todo.push(ph); }));
+      for (let n = 0; n < todo.length; n++) {
+        toast(`Menyiapkan foto ${n + 1} dari ${todo.length}…`);
+        const r = await assets.upload(dataURLtoBlob(todo[n].src));
+        todo[n].asset = "/_blob/" + r.id;
+        save();
+      }
+      const shared = cleanBook({ pages: state.pages.map(p => ({
+        id: p.id, type: p.type, texts: p.texts,
+        photos: Object.fromEntries(Object.entries(p.photos).map(([k, ph]) => [k, { src: ph.asset || ph.src, x: ph.x, y: ph.y }]))
+      })) });
+      // Photos still held only on this device (if any) are left out rather than embedded.
+      shared.pages.forEach(p => { for (const k in p.photos) if (!p.photos[k].src.startsWith("/_blob/")) delete p.photos[k]; });
+      shared.sharedAt = Date.now();
+      try { sessionStorage.setItem("bou-just-shared", "1"); } catch {}
+      toast("Membungkus buku untukmu berdua…");
+      await artifact.publish(buildDoc(shared)); // every open view, this one included, reloads to the new version
+    } catch (e) {
+      try { sessionStorage.removeItem("bou-just-shared"); } catch {}
+      const code = e && e.code;
+      if (code === "conflict") return;
+      if (code === "not_writer" || code === "not_granted" || code === "consent_required" || code === "capability_disabled") toast("Hanya pemilik buku yang bisa membagikannya.");
+      else if (code === "too_large" || code === "quota_or_state") toast("Bukunya terlalu besar untuk dibagikan. Coba kurangi beberapa foto.");
+      else if (code === "rate_limited") toast("Tunggu sebentar, lalu coba bagikan lagi.");
+      else toast("Bukunya belum berhasil dibagikan. Coba lagi sebentar lagi.");
+    } finally {
+      btnShare.disabled = false;
+    }
+  };
+
+  const shareModal = document.getElementById("shareModal");
+  const shareLink = document.getElementById("shareLink");
+  shareLink.value = SHARE_URL;
+  document.getElementById("shareClose").onclick = () => shareModal.classList.remove("open");
+  document.getElementById("btnCopy").onclick = () => {
+    const done = () => toast("Link disalin ♡");
+    const fallback = () => { shareLink.focus(); shareLink.select(); };
+    try { navigator.clipboard.writeText(SHARE_URL).then(done, fallback); } catch { fallback(); }
+  };
+
+  /* ================= Boot ================= */
   book.classList.add("intro");
-  render();
+  if (SHARED) { viewBook = SHARED; envelope.hidden = false; setMode("view"); }
+  else render();
+
+  let justShared = false;
+  try { justShared = sessionStorage.getItem("bou-just-shared") === "1"; sessionStorage.removeItem("bou-just-shared"); } catch {}
+
   load().then(saved => {
-    if (saved && Array.isArray(saved.pages) && saved.pages.length) { state = upgrade(saved); render(); }
+    if (saved && Array.isArray(saved.pages) && saved.pages.length) state = upgrade(saved);
+    else if (SHARED) state = upgrade(JSON.parse(JSON.stringify(SHARED)));
+    if (mode === "edit") render();
     setTimeout(() => book.classList.remove("intro"), 1500);
+  });
+
+  // People who can edit this book get the editor; everyone else keeps the finished book.
+  use("user").then(async u => {
+    let canEdit = false;
+    try { canEdit = u ? await u.canEdit() : false; } catch { canEdit = false; }
+    if (!canEdit) return;
+    if (mode === "view" && btnBackEdit.hidden) { envelope.hidden = true; setMode("edit"); }
+    const [artifact, assets] = await Promise.all([use("artifact"), use("assets")]);
+    if (artifact && assets && SRC) btnShare.hidden = false;
+    if (justShared) shareModal.classList.add("open");
   });
 })();
 </script>
+<!--/page-->
 </body>
 </html>
