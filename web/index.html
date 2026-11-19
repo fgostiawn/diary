@@ -41,7 +41,7 @@
 
   /* ---------- Header / toolbar ---------- */
   .topbar {
-    position: sticky; top: 0; z-index: 20;
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
     display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
     padding: 12px 16px;
     background: rgba(251, 238, 242, .88);
@@ -120,12 +120,13 @@
     display: grid; place-items: center; text-align: center;
     color: var(--rose); cursor: pointer; z-index: 1;
     transition: border-color .15s, box-shadow .15s;
-    touch-action: none;
+    touch-action: manipulation;
   }
   .slot:hover, .slot.active { border-color: var(--rose); }
   .slot.dragover { box-shadow: inset 0 0 0 3px var(--rose); }
   .slot .ph { font-size: 3cqw; font-weight: 600; line-height: 1.4; padding: 6px; pointer-events: none; }
   .slot .ph span { display: block; font-size: 6cqw; line-height: 1; margin-bottom: .6cqw; }
+  .slot.filled.active { touch-action: none; box-shadow: inset 0 0 0 3px var(--rose); }
   .slot.filled { border: 0; background: #f3e4e9; cursor: grab; }
   .slot.filled.panning { cursor: grabbing; }
   .slot img {
@@ -142,7 +143,11 @@
     background: rgba(255,255,255,.92); color: var(--rose-deep); font-size: 13px;
     display: grid; place-items: center; box-shadow: 0 1px 4px rgba(0,0,0,.15);
   }
-  @media (hover: none) { .slot.filled .tools { opacity: 1; } }
+  @media (hover: none) {
+    .slot.filled.active .tools { opacity: 1; }
+    .slot .tools button { width: 34px; height: 34px; font-size: 15px; }
+  }
+  .slot .loading { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,250,251,.8); font-size: 3cqw; font-weight: 700; color: var(--rose); }
 
   /* ---------- Shared page pieces ---------- */
   .title {
@@ -259,17 +264,34 @@
   .tpl span { font-size: 11px; color: var(--ink-soft); line-height: 1.4; }
   .modal-foot { display: flex; justify-content: flex-end; margin-top: 16px; }
 
+  /* floating "add photos" button, thumb-friendly on phones */
+  .fab {
+    position: fixed; z-index: 30;
+    right: calc(18px + env(safe-area-inset-right, 0px));
+    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    border: 0; border-radius: 999px; padding: 14px 20px;
+    background: var(--rose); color: #fff; font-weight: 700; font-size: 14px;
+    box-shadow: 0 10px 24px -8px rgba(166, 30, 77, .6);
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .fab:hover { background: var(--rose-deep); }
+  .fab svg { width: 20px; height: 20px; }
+  .confirm-box { width: min(380px, 100%); }
+  .confirm-box .modal-foot { gap: 8px; }
+
   .toast {
-    position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px);
+    position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px);
     background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 999px;
     font-size: 13px; opacity: 0; transition: .25s; z-index: 60; pointer-events: none;
     max-width: calc(100% - 32px); text-align: center;
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  footer { text-align: center; font-size: 12px; color: var(--ink-soft); padding: 0 16px 32px; }
+  footer { text-align: center; font-size: 12px; color: var(--ink-soft); padding: 0 16px 96px; }
+  .framed .local-only { display: none !important; }
 
   @media (max-width: 560px) {
+    .topbar { position: static; }
     .brand small { display: none; }
     .btn { padding: 7px 11px; font-size: 12px; }
   }
@@ -278,7 +300,7 @@
   @page { size: 148mm 210mm; margin: 0; }
   @media print {
     body { background: #fff; }
-    .topbar, .hint, .sheet-bar, .add-wrap, .modal, .toast, footer, .slot .tools { display: none !important; }
+    .topbar, .hint, .sheet-bar, .add-wrap, .modal, .toast, .fab, footer, .slot .tools { display: none !important; }
     .book { display: block; margin: 0; padding: 0; max-width: none; }
     .sheet { display: block; break-after: page; page-break-after: always; }
     .sheet:last-child { break-after: auto; page-break-after: auto; }
@@ -301,23 +323,37 @@
     </div>
   </div>
   <div class="actions">
-    <button class="btn" id="btnBackup" title="Unduh cadangan (.json)">⬇ Cadangan</button>
+    <button class="btn local-only" id="btnBackup" title="Unduh cadangan (.json)">⬇ Cadangan</button>
     <button class="btn" id="btnRestore" title="Buka cadangan (.json)">⬆ Buka</button>
     <button class="btn" id="btnReset" title="Kembalikan ke template awal">↺ Reset</button>
-    <button class="btn primary" id="btnPrint">🖨 Simpan PDF</button>
+    <button class="btn primary local-only" id="btnPrint">🖨 Simpan PDF</button>
   </div>
 </header>
 
 <p class="hint">
-  <b>Klik kotak foto</b> untuk memilih gambar, <b>seret file</b> ke kotak, atau <b>tempel (Ctrl/⌘+V)</b> gambar yang sudah di-copy.
-  Geser foto di dalam kotak untuk mengatur posisinya. <b>Klik tulisan</b> untuk mengganti nama &amp; kata-kata. Semua tersimpan otomatis di browser ini.
+  <b>Dari HP:</b> ketuk tombol <b>Tambah foto</b> lalu pilih banyak foto dari galeri sekaligus (atau ambil dari kamera). Foto langsung mengisi kotak yang masih kosong.
+  Ketuk satu kotak untuk mengisi atau mengganti fotonya; ketuk foto sekali lalu geser untuk mengatur posisinya.
+  <b>Di komputer:</b> klik, seret file, atau tempel (Ctrl/⌘+V). <b>Ketuk tulisan</b> untuk mengganti nama &amp; kata-kata. Semua tersimpan otomatis di browser ini.
 </p>
 
 <main class="book" id="book"></main>
 
 <div class="add-wrap"><button class="add-card" id="btnAdd">＋ Tambah halaman</button></div>
 
-<footer>Dibuat dengan ♥ — tekan “Simpan PDF” lalu pilih “Save as PDF” untuk mencetak.</footer>
+<footer><span class="local-only">Dibuat dengan ♥ — tekan “Simpan PDF” lalu pilih “Save as PDF” untuk mencetak.</span></footer>
+
+<button class="fab" id="btnBulk" aria-label="Tambah foto dari galeri atau kamera">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/></svg>
+  Tambah foto
+</button>
+
+<div class="modal" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmMsg">
+  <div class="modal-box confirm-box">
+    <h2 id="confirmMsg">Yakin?</h2>
+    <p id="confirmSub"></p>
+    <div class="modal-foot"><button class="btn" id="confirmNo">Batal</button><button class="btn primary" id="confirmYes">Ya, lanjut</button></div>
+  </div>
+</div>
 
 <div class="modal" id="tplModal" role="dialog" aria-modal="true" aria-labelledby="tplTitle">
   <div class="modal-box">
@@ -329,6 +365,7 @@
 </div>
 
 <input type="file" id="fileInput" accept="image/*" hidden>
+<input type="file" id="bulkInput" accept="image/*" multiple hidden>
 <input type="file" id="restoreInput" accept="application/json,.json" hidden>
 <div class="toast" id="toast"></div>
 
@@ -521,6 +558,8 @@
     let start = null;
     el.addEventListener("pointerdown", e => {
       if (!p.photos[key] || e.target.closest("[data-tool]")) return;
+      // On touch, the first tap only selects the photo so the page can still scroll.
+      if (e.pointerType !== "mouse" && !el.classList.contains("active")) return;
       setActive(el, p);
       const ph = p.photos[key];
       start = { x: e.clientX, y: e.clientY, ox: ph.x, oy: ph.y, w: el.clientWidth, h: el.clientHeight };
@@ -550,6 +589,7 @@
   });
 
   async function putImage(blob, el, p) {
+    el.insertAdjacentHTML("beforeend", '<div class="loading">Memuat…</div>');
     try {
       const src = await compress(blob);
       p.photos[el.dataset.slot] = { src, x: 50, y: 50 };
@@ -557,6 +597,7 @@
       setActive(el, p);
       save();
     } catch {
+      el.querySelector(".loading")?.remove();
       toast("Gambar tidak bisa dibuka. Coba format JPG atau PNG.");
     }
   }
@@ -611,8 +652,12 @@
     else if (act === "dup") state.pages.splice(i + 1, 0, { ...JSON.parse(JSON.stringify(state.pages[i])), id: uid() });
     else if (act === "del") {
       if (state.pages.length <= 1) { toast("Buku minimal punya satu halaman."); return; }
-      if (!confirm("Hapus halaman ini beserta fotonya?")) return;
-      state.pages.splice(i, 1);
+      askConfirm("Hapus halaman ini?", "Foto dan tulisan di halaman ini ikut terhapus.", "Hapus").then(ok => {
+        if (!ok) return;
+        const j = state.pages.findIndex(p => p.id === id);
+        if (j > -1) { state.pages.splice(j, 1); render(); save(); }
+      });
+      return;
     }
     render(); save();
   });
@@ -625,7 +670,7 @@
   document.getElementById("btnAdd").onclick = () => modal.classList.add("open");
   document.getElementById("tplClose").onclick = () => modal.classList.remove("open");
   modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("open"); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") modal.classList.remove("open"); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { modal.classList.remove("open"); cModal.classList.contains("open") && document.getElementById("confirmNo").click(); } });
   tplGrid.addEventListener("click", e => {
     const b = e.target.closest("[data-tpl]");
     if (!b) return;
@@ -638,12 +683,66 @@
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 
+  /* ================= Confirm dialog (native confirm() is blocked in some viewers) ================= */
+  const cModal = document.getElementById("confirmModal");
+  function askConfirm(msg, sub, yesLabel) {
+    document.getElementById("confirmMsg").textContent = msg;
+    document.getElementById("confirmSub").textContent = sub || "";
+    document.getElementById("confirmYes").textContent = yesLabel || "Ya, lanjut";
+    cModal.classList.add("open");
+    return new Promise(res => {
+      const done = v => { cModal.classList.remove("open"); cModal.onclick = null; res(v); };
+      document.getElementById("confirmYes").onclick = () => done(true);
+      document.getElementById("confirmNo").onclick = () => done(false);
+      cModal.onclick = e => { if (e.target === cModal) done(false); };
+    });
+  }
+
+  /* ================= Bulk add from phone gallery / camera ================= */
+  const bulkInput = document.getElementById("bulkInput");
+  document.getElementById("btnBulk").onclick = () => { bulkInput.value = ""; bulkInput.click(); };
+  bulkInput.addEventListener("change", async () => {
+    const files = [...bulkInput.files].filter(f => f.type.startsWith("image/") || /\.(heic|heif)$/i.test(f.name));
+    if (!files.length) return;
+    const slotKeys = type => { // slot order as it appears in the template
+      const d = document.createElement("div"); d.innerHTML = TEMPLATES[type].html();
+      return [...d.querySelectorAll("[data-slot]")].map(s => s.dataset.slot);
+    };
+    const nextEmpty = () => {
+      for (const pg of state.pages) for (const k of slotKeys(pg.type)) if (!pg.photos[k]) return { pg, k };
+      // book is full: add a collage page before the closing page
+      const pg = newPage("collage");
+      const lastIsEnd = state.pages[state.pages.length - 1]?.type === "end";
+      state.pages.splice(lastIsEnd ? state.pages.length - 1 : state.pages.length, 0, pg);
+      return { pg, k: slotKeys("collage")[0] };
+    };
+    let ok = 0, firstId = null;
+    for (let n = 0; n < files.length; n++) {
+      toast(`Memproses foto ${n + 1} dari ${files.length}…`);
+      try {
+        const src = await compress(files[n]);
+        const t = nextEmpty();
+        t.pg.photos[t.k] = { src, x: 50, y: 50 };
+        firstId = firstId || t.pg.id;
+        ok++;
+      } catch { /* skip unreadable file */ }
+    }
+    render(); save();
+    toast(ok === files.length ? `${ok} foto berhasil ditambahkan ♥` : `${ok} dari ${files.length} foto berhasil ditambahkan. Sisanya formatnya tidak didukung.`);
+    const el = firstId && book.querySelector(`[data-id="${firstId}"]`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
   /* ================= Toolbar ================= */
+  try { if (window.self !== window.top) document.documentElement.classList.add("framed"); }
+  catch { document.documentElement.classList.add("framed"); }
   document.getElementById("btnPrint").onclick = () => window.print();
 
   document.getElementById("btnReset").onclick = () => {
-    if (!confirm("Kembalikan ke template awal? Semua foto & tulisan akan dihapus.")) return;
-    state = freshBook(); render(); save(); toast("Template dikembalikan ke awal.");
+    askConfirm("Kembalikan ke template awal?", "Semua foto & tulisan akan dihapus.", "Reset").then(ok => {
+      if (!ok) return;
+      state = freshBook(); render(); save(); toast("Template dikembalikan ke awal.");
+    });
   };
 
   document.getElementById("btnBackup").onclick = () => {
