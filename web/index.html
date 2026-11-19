@@ -4,134 +4,167 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Book of Us</title>
-<meta name="description" content="Photobook pasangan bernuansa pink — tempel foto, ubah tulisan, lalu simpan sebagai PDF.">
+<meta name="description" content="Scrapbook kenangan berdua bernuansa putih-biru.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=DM+Serif+Display:ital@0;1&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* Scrapbook on blue dotted paper: white photo prints, washi tape, blue ink doodles. */
   :root {
     color-scheme: light;
-    --bg: #fbeef2;
-    --bg-2: #f7dfe7;
-    --paper: #fffafb;
-    --ink: #4a2a35;
-    --ink-soft: #8a6270;
-    --rose: #d6336c;
-    --rose-deep: #a61e4d;
-    --blush: #f6c3d3;
-    --blush-2: #fde4ec;
-    --line: #efd0da;
-    --shadow: 0 10px 30px -12px rgba(166, 30, 77, .28), 0 2px 6px rgba(166, 30, 77, .08);
-    --serif: "Cormorant Garamond", Georgia, serif;
-    --sans: "Montserrat", system-ui, sans-serif;
-    --script: "Great Vibes", cursive;
+    --bg: #e8f1fb;
+    --dot: #c4d8ef;
+    --paper: #fffefb;
+    --paper-line: #dbe7f6;
+    --ink: #1c3557;
+    --ink-soft: #5e7697;
+    --blue: #2f6fd0;
+    --blue-deep: #1b4f9f;
+    --sky: #bcd5f2;
+    --sky-2: #e4eefa;
+    --line: #d3e1f2;
+    --tape-a: rgba(108, 160, 228, .62);
+    --tape-b: rgba(255, 255, 255, .55);
+    --shadow: 0 14px 30px -14px rgba(27, 79, 159, .35), 0 2px 6px rgba(27, 79, 159, .08);
+    --serif: "DM Serif Display", Georgia, serif;
+    --hand: "Caveat", "Segoe Print", cursive;
+    --ui: "Nunito", system-ui, sans-serif;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
-    background:
-      radial-gradient(circle at 15% 10%, #fff 0, transparent 40%),
-      radial-gradient(circle at 85% 90%, var(--bg-2) 0, transparent 45%),
-      var(--bg);
+    background-color: var(--bg);
+    background-image: radial-gradient(var(--dot) 1.2px, transparent 1.4px);
+    background-size: 22px 22px;
     color: var(--ink);
-    font-family: var(--sans);
+    font-family: var(--ui);
     min-height: 100vh;
+    overflow-x: hidden;
   }
   button { font: inherit; cursor: pointer; }
 
-  /* ---------- Header / toolbar ---------- */
+  /* ---------- Header ---------- */
   .topbar {
     position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
     display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-    padding: 12px 16px;
-    background: rgba(251, 238, 242, .88);
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+    background: rgba(255, 255, 255, .86);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
   }
   .brand { display: flex; align-items: center; gap: 8px; margin-right: auto; }
-  .brand h1 {
-    margin: 0; font-size: 15px; letter-spacing: .18em; font-weight: 800; color: var(--rose);
-  }
-  .brand small { display: block; font-size: 11px; color: var(--ink-soft); letter-spacing: .02em; font-weight: 500; }
+  .brand svg { width: 26px; height: 26px; color: var(--blue); animation: beat 1.8s ease-in-out infinite; }
+  .brand h1 { margin: 0; font-family: var(--serif); font-weight: 400; font-size: 22px; color: var(--ink); }
+  .brand h1 em { color: var(--blue); }
   .btn {
     border: 1px solid var(--line); background: #fff; color: var(--ink);
-    padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 700;
     display: inline-flex; align-items: center; gap: 6px;
-    transition: background .15s, border-color .15s, transform .1s;
+    transition: background .15s, border-color .15s, transform .15s;
   }
-  .btn:hover { border-color: var(--blush); background: var(--blush-2); }
-  .btn:active { transform: scale(.97); }
-  .btn.primary { background: var(--rose); color: #fff; border-color: var(--rose); }
-  .btn.primary:hover { background: var(--rose-deep); border-color: var(--rose-deep); }
+  .btn:hover { border-color: var(--sky); background: var(--sky-2); transform: translateY(-1px) rotate(-1deg); }
+  .btn:active { transform: scale(.95); }
+  .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .btn.primary:hover { background: var(--blue-deep); border-color: var(--blue-deep); }
   .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-  .hint {
-    max-width: 760px; margin: 18px auto 0; padding: 0 16px;
-    font-size: 13px; line-height: 1.6; color: var(--ink-soft); text-align: center;
-  }
-  .hint b { color: var(--rose-deep); }
+  /* ---------- Floating doodles in the background ---------- */
+  .sky { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .sky svg { position: absolute; color: var(--sky); animation: drift 9s ease-in-out infinite; }
 
   /* ---------- Book ---------- */
   .book {
+    position: relative; z-index: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
-    gap: 36px 28px;
-    max-width: 1180px; margin: 24px auto 40px; padding: 0 16px;
+    gap: 40px 30px;
+    max-width: 1180px; margin: 28px auto 40px;
+    padding: 0 max(16px, env(safe-area-inset-right, 0px)) 0 max(16px, env(safe-area-inset-left, 0px));
   }
-  .sheet { display: flex; flex-direction: column; gap: 10px; }
-  .sheet-bar {
-    display: flex; align-items: center; gap: 4px;
-    font-size: 12px; color: var(--ink-soft); font-weight: 600;
-  }
-  .sheet-bar .num { margin-right: auto; letter-spacing: .08em; }
+  .sheet { display: flex; flex-direction: column; gap: 8px; }
+  .book.intro .sheet, .sheet.new { animation: pop .55s cubic-bezier(.2, 1.4, .4, 1) both; }
+  .book.intro .sheet:nth-child(2) { animation-delay: .08s; } .book.intro .sheet:nth-child(3) { animation-delay: .16s; } .book.intro .sheet:nth-child(n+4) { animation-delay: .24s; }
+  .sheet-bar { display: flex; align-items: center; gap: 2px; color: var(--ink-soft); }
+  .sheet-bar .num { order: 9; margin-left: auto; font-family: var(--hand); font-size: 22px; color: var(--blue); }
   .icon-btn {
     width: 30px; height: 30px; border-radius: 50%;
     border: 1px solid transparent; background: transparent; color: var(--ink-soft);
-    display: grid; place-items: center; font-size: 14px;
+    display: grid; place-items: center; font-size: 14px; transition: transform .15s;
   }
-  .icon-btn:hover { background: #fff; border-color: var(--line); color: var(--rose); }
+  .icon-btn:hover { background: #fff; border-color: var(--line); color: var(--blue); transform: scale(1.12); }
   .icon-btn:disabled { opacity: .3; pointer-events: none; }
 
   .page {
     container-type: inline-size;
     position: relative;
     aspect-ratio: 148 / 210;
-    background: var(--paper);
+    background:
+      radial-gradient(circle at 20% 10%, #fff 0, transparent 60%),
+      var(--paper);
     box-shadow: var(--shadow);
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
     display: flex; flex-direction: column; align-items: center;
+    transition: transform .3s;
   }
-  .page::after { /* subtle paper border */
-    content: ""; position: absolute; inset: 3.2cqw; border: 1px solid #f6dde5; pointer-events: none; border-radius: 2px;
-  }
+  .sheet:nth-child(odd) .page { transform: rotate(-.6deg); }
+  .sheet:nth-child(even) .page { transform: rotate(.6deg); }
+  .sheet .page:hover { transform: rotate(0) translateY(-3px); }
 
   /* editable text */
-  [data-text] { outline: none; border-radius: 3px; transition: background .15s; position: relative; z-index: 1; }
-  [data-text]:hover { background: rgba(246, 195, 211, .25); }
-  [data-text]:focus { background: rgba(246, 195, 211, .35); }
-  [data-text]:empty::before { content: attr(data-ph); color: #d9a9b8; }
+  [data-text] { outline: none; border-radius: 3px; transition: background .15s; position: relative; z-index: 3; }
+  [data-text]:hover { background: rgba(188, 213, 242, .3); }
+  [data-text]:focus { background: rgba(188, 213, 242, .45); }
+  [data-text]:empty::before { content: attr(data-ph); color: #a9c1df; }
 
-  /* photo slot */
+  /* ---------- Photo prints with washi tape ---------- */
+  .frame {
+    position: relative; z-index: 2;
+    background: #fff;
+    padding: 2.2cqw;
+    box-shadow: 0 6px 14px -6px rgba(27, 79, 159, .4), 0 0 0 1px rgba(27, 79, 159, .05);
+    transform: rotate(var(--r, 0deg));
+    transition: transform .35s cubic-bezier(.2, 1.4, .4, 1);
+  }
+  .frame:hover { transform: rotate(calc(var(--r, 0deg) * -1)) scale(1.02); }
+  .frame::before { /* washi tape */
+    content: ""; position: absolute; z-index: 3;
+    top: -2.4cqw; left: 50%; width: 18cqw; height: 5cqw;
+    transform: translateX(-50%) rotate(-4deg);
+    background: repeating-linear-gradient(45deg, var(--tape-a) 0 1.2cqw, var(--tape-b) 1.2cqw 2.4cqw);
+    box-shadow: 0 1px 2px rgba(27, 79, 159, .12);
+  }
+  .frame.dots::before {
+    background: radial-gradient(rgba(255,255,255,.85) 28%, transparent 30%) 0 0 / 2cqw 2cqw, var(--tape-a);
+  }
+  .frame.corner::before { top: -1.2cqw; left: -3cqw; width: 13cqw; transform: rotate(-38deg); }
+  .frame.corner::after {
+    content: ""; position: absolute; z-index: 3; bottom: -1.2cqw; right: -3cqw; width: 13cqw; height: 5cqw;
+    transform: rotate(-38deg);
+    background: repeating-linear-gradient(45deg, var(--tape-a) 0 1.2cqw, var(--tape-b) 1.2cqw 2.4cqw);
+  }
+  .frame.notape::before { display: none; }
+  .frame.round { border-radius: 50%; padding: 1.8cqw; }
+  .frame.round .slot { border-radius: 50%; }
+
   .slot {
-    position: relative; overflow: hidden;
-    background: repeating-linear-gradient(45deg, #fdf1f5 0 8px, #fbe7ee 8px 16px);
-    border: 1.5px dashed var(--blush);
-    display: grid; place-items: center; text-align: center;
-    color: var(--rose); cursor: pointer; z-index: 1;
-    transition: border-color .15s, box-shadow .15s;
+    position: relative; overflow: hidden; width: 100%; height: 100%;
+    background: var(--sky-2);
+    display: grid; place-items: center;
+    color: var(--blue); cursor: pointer;
     touch-action: manipulation;
   }
-  .slot:hover, .slot.active { border-color: var(--rose); }
-  .slot.dragover { box-shadow: inset 0 0 0 3px var(--rose); }
-  .slot .ph { font-size: 3cqw; font-weight: 600; line-height: 1.4; padding: 6px; pointer-events: none; }
-  .slot .ph span { display: block; font-size: 6cqw; line-height: 1; margin-bottom: .6cqw; }
-  .slot.filled.active { touch-action: none; box-shadow: inset 0 0 0 3px var(--rose); }
-  .slot.filled { border: 0; background: #f3e4e9; cursor: grab; }
+  .slot .ph { pointer-events: none; display: grid; place-items: center; }
+  .slot .ph svg { width: 9cqw; height: 9cqw; opacity: .55; transition: transform .25s, opacity .25s; }
+  .slot:hover .ph svg { transform: scale(1.15) rotate(-8deg); opacity: .9; }
+  .slot.dragover { box-shadow: inset 0 0 0 3px var(--blue); }
+  .slot.filled { background: var(--sky-2); cursor: grab; }
+  .slot.filled.active { touch-action: none; box-shadow: inset 0 0 0 3px var(--blue); }
   .slot.filled.panning { cursor: grabbing; }
   .slot img {
     position: absolute; inset: 0; width: 100%; height: 100%;
     object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none;
+    animation: develop .9s ease-out both;
   }
   .slot .tools {
     position: absolute; top: 6px; right: 6px; display: flex; gap: 4px;
@@ -140,144 +173,153 @@
   .slot.filled:hover .tools, .slot.filled.active .tools { opacity: 1; }
   .slot .tools button {
     width: 26px; height: 26px; border-radius: 50%; border: 0;
-    background: rgba(255,255,255,.92); color: var(--rose-deep); font-size: 13px;
+    background: rgba(255,255,255,.94); color: var(--blue-deep); font-size: 13px;
     display: grid; place-items: center; box-shadow: 0 1px 4px rgba(0,0,0,.15);
   }
   @media (hover: none) {
     .slot.filled.active .tools { opacity: 1; }
     .slot .tools button { width: 34px; height: 34px; font-size: 15px; }
   }
-  .slot .loading { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,250,251,.8); font-size: 3cqw; font-weight: 700; color: var(--rose); }
+  .slot .loading { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(255,255,255,.75); }
+  .slot .loading::after { content: "♥"; font-size: 8cqw; color: var(--blue); animation: beat .8s ease-in-out infinite; }
 
-  /* ---------- Shared page pieces ---------- */
-  .title {
-    font-family: var(--sans); font-weight: 800; color: var(--rose);
-    letter-spacing: .14em; text-transform: uppercase; text-align: center;
+  /* ---------- Words & doodles ---------- */
+  .title { font-family: var(--serif); font-weight: 400; color: var(--ink); text-align: center; line-height: 1; }
+  .label {
+    display: inline-block; font-family: var(--ui); font-weight: 800; text-transform: uppercase; letter-spacing: .22em;
+    color: var(--blue-deep); background: var(--sky-2); padding: 1.2cqw 3cqw; transform: rotate(-1.5deg);
+    box-shadow: 0 1px 0 var(--sky);
   }
-  .subtitle {
-    font-family: var(--serif); font-weight: 600; color: var(--rose-deep);
-    letter-spacing: .14em; text-transform: uppercase; text-align: center;
+  .hand { font-family: var(--hand); font-weight: 700; color: var(--blue-deep); text-align: center; line-height: 1.05; }
+  .body-text { font-family: var(--hand); font-weight: 500; color: var(--ink); line-height: 1.3; }
+  .doodle { position: absolute; z-index: 1; color: var(--blue); pointer-events: none; }
+  .doodle.wiggle { animation: wiggle 3s ease-in-out infinite; }
+  .doodle.twinkle { animation: twinkle 2.4s ease-in-out infinite; }
+  .doodle.beat { animation: beat 1.6s ease-in-out infinite; }
+  .doodle.float { animation: bob 3.6s ease-in-out infinite; }
+  .stamp {
+    position: absolute; z-index: 3; display: grid; place-items: center; text-align: center;
+    width: 20cqw; height: 20cqw; border-radius: 50%;
+    border: .6cqw dashed var(--blue); color: var(--blue);
+    font-family: var(--hand); font-weight: 700; font-size: 4.2cqw; line-height: 1;
+    background: rgba(255,255,255,.75); transform: rotate(12deg);
+    animation: wiggle 4s ease-in-out infinite;
   }
-  .script { font-family: var(--script); color: var(--rose-deep); text-align: center; line-height: 1.1; }
-  .body-text { font-family: var(--serif); color: var(--ink); line-height: 1.55; }
   .mark {
-    position: absolute; bottom: 6.5cqw; left: 0; right: 0;
-    display: flex; flex-direction: column; align-items: center; gap: .6cqw;
-    color: var(--rose); z-index: 1;
+    position: absolute; bottom: 6cqw; left: 0; right: 0; z-index: 3;
+    display: flex; flex-direction: column; align-items: center; gap: .4cqw; color: var(--blue);
   }
-  .mark svg { width: 7cqw; height: 7cqw; }
-  .mark .mark-text { font-family: var(--serif); font-style: italic; font-size: 3.2cqw; color: var(--ink-soft); }
+  .mark svg { width: 6cqw; height: 6cqw; animation: beat 1.6s ease-in-out infinite; }
+  .mark .mark-text { font-family: var(--hand); font-size: 5cqw; color: var(--ink-soft); }
 
   /* cover */
-  .t-cover .title { margin-top: 22cqw; font-size: 6.2cqw; }
-  .t-cover .subtitle { margin-top: 3cqw; font-size: 3.3cqw; }
-  .t-cover .slot { margin-top: 8cqw; width: 66cqw; height: 52cqw; }
+  .t-cover .title { margin-top: 17cqw; font-size: 11cqw; }
+  .t-cover .title-wrap { position: relative; }
+  .t-cover .names { margin-top: 2.5cqw; font-size: 8cqw; }
+  .t-cover .frame { margin-top: 6cqw; width: 66cqw; height: 54cqw; --r: -2deg; }
 
   /* collage */
-  .t-collage .grid {
-    margin-top: 22cqw; width: 72cqw; height: 72cqw;
-    display: flex; gap: 3cqw;
-  }
-  .t-collage .col { display: flex; flex-direction: column; gap: 3cqw; }
-  .t-collage .col .slot { width: 100%; }
-  .t-collage .c1 .slot:first-child { flex: 56; }
-  .t-collage .c1 .slot:last-child  { flex: 44; }
-  .t-collage .c2 .slot:first-child { flex: 44; }
-  .t-collage .c2 .slot:last-child  { flex: 56; }
-  .t-collage .c1 { flex: 42; } .t-collage .c2 { flex: 58; }
-  .t-collage .script { margin-top: 6cqw; font-size: 9cqw; }
+  .t-collage .grid { margin-top: 15cqw; width: 76cqw; height: 84cqw; display: flex; gap: 4cqw; }
+  .t-collage .col { display: flex; flex-direction: column; gap: 5cqw; }
+  .t-collage .c1 { flex: 44; } .t-collage .c2 { flex: 56; }
+  .t-collage .c1 .frame:first-child { flex: 56; } .t-collage .c1 .frame:last-child { flex: 44; }
+  .t-collage .c2 .frame:first-child { flex: 44; } .t-collage .c2 .frame:last-child { flex: 56; }
+  .t-collage .hand { margin-top: 5cqw; font-size: 10cqw; }
 
   /* full */
-  .t-full .slot { margin-top: 12cqw; width: 76cqw; height: 100cqw; }
-  .t-full .script { margin-top: 6cqw; font-size: 8cqw; }
-  .t-full .date { margin-top: 1.5cqw; font-family: var(--sans); font-size: 2.8cqw; letter-spacing: .3em; color: var(--ink-soft); text-transform: uppercase; }
+  .t-full .frame { margin-top: 12cqw; width: 74cqw; height: 96cqw; --r: 1.5deg; padding-bottom: 12cqw; }
+  .t-full .frame .cap { position: absolute; left: 0; right: 0; bottom: 2cqw; font-size: 7.5cqw; }
+  .t-full .label { margin-top: 7cqw; font-size: 2.8cqw; }
 
   /* duo */
-  .t-duo .row { margin-top: 14cqw; width: 76cqw; display: flex; gap: 3cqw; }
-  .t-duo .row .slot { flex: 1; height: 62cqw; }
-  .t-duo .row .slot:last-child { margin-top: 12cqw; }
-  .t-duo .subtitle { margin-top: 7cqw; font-size: 3.4cqw; }
-  .t-duo .body-text { margin-top: 3cqw; width: 70cqw; font-size: 4cqw; text-align: center; font-style: italic; }
+  .t-duo .row { margin-top: 14cqw; width: 78cqw; display: flex; gap: 4cqw; }
+  .t-duo .row .frame { flex: 1; height: 62cqw; }
+  .t-duo .row .frame:first-child { --r: -3deg; }
+  .t-duo .row .frame:last-child { --r: 3deg; margin-top: 12cqw; }
+  .t-duo .label { margin-top: 6cqw; font-size: 3cqw; }
+  .t-duo .body-text { margin-top: 3cqw; width: 70cqw; font-size: 6cqw; text-align: center; }
 
   /* trio */
-  .t-trio .slot.big { margin-top: 12cqw; width: 76cqw; height: 56cqw; }
-  .t-trio .row { margin-top: 3cqw; width: 76cqw; display: flex; gap: 3cqw; }
-  .t-trio .row .slot { flex: 1; height: 40cqw; }
-  .t-trio .script { margin-top: 5cqw; font-size: 8cqw; }
+  .t-trio .frame.big { margin-top: 12cqw; width: 76cqw; height: 54cqw; --r: -1deg; }
+  .t-trio .row { margin-top: 5cqw; width: 76cqw; display: flex; gap: 5cqw; }
+  .t-trio .row .frame { flex: 1; height: 40cqw; }
+  .t-trio .row .frame:first-child { --r: 2.5deg; }
+  .t-trio .row .frame:last-child { --r: -2.5deg; }
+  .t-trio .hand { margin-top: 5cqw; font-size: 9cqw; }
 
-  /* letter */
-  .t-letter .inner { width: 100%; padding: 18cqw 13cqw 0; display: flex; flex-direction: column; }
-  .t-letter .script { text-align: left; font-size: 11cqw; }
-  .t-letter .body-text { margin-top: 4cqw; font-size: 4.3cqw; white-space: pre-wrap; flex: 0 1 auto; max-height: 92cqw; overflow: hidden; }
-  .t-letter .sign { margin-top: 5cqw; text-align: right; font-size: 8cqw; }
-  .t-letter .slot { position: absolute; left: 13cqw; bottom: 16cqw; width: 30cqw; height: 30cqw; border-radius: 50%; }
+  /* letter: lined notebook paper */
+  .t-letter .lines {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent 10.5cqw, rgba(47, 111, 208, .35) 10.5cqw, rgba(47, 111, 208, .35) calc(10.5cqw + 1px), transparent calc(10.5cqw + 1px)),
+      repeating-linear-gradient(transparent 0 calc(7.8cqw - 1px), var(--paper-line) calc(7.8cqw - 1px) 7.8cqw);
+    background-position: 0 0, 0 1.6cqw;
+  }
+  .t-letter .inner { width: 100%; padding: 15cqw 11cqw 0 14cqw; display: flex; flex-direction: column; }
+  .t-letter .hi { text-align: left; font-size: 11cqw; line-height: 15.6cqw; }
+  .t-letter .body-text { font-size: 6cqw; line-height: 7.8cqw; white-space: pre-wrap; max-height: 86cqw; overflow: hidden; }
+  .t-letter .sign { text-align: right; font-size: 8cqw; line-height: 15.6cqw; }
+  .t-letter .frame { position: absolute; left: 12cqw; bottom: 10cqw; width: 34cqw; height: 34cqw; }
 
   /* polaroid */
   .t-polaroid { justify-content: center; }
-  .t-polaroid .pol {
-    background: #fff; padding: 3.5cqw 3.5cqw 0; box-shadow: 0 6px 20px -8px rgba(166,30,77,.35);
-    width: 70cqw; transform: rotate(-3deg); position: relative; z-index: 1;
-  }
-  .t-polaroid .pol .slot { width: 100%; height: 72cqw; }
-  .t-polaroid .pol .script { font-size: 7.5cqw; padding: 3cqw 0 4cqw; }
-  .t-polaroid .tape {
-    position: absolute; top: -3cqw; left: 50%; width: 22cqw; height: 6cqw; transform: translateX(-50%) rotate(4deg);
-    background: rgba(246, 195, 211, .75); z-index: 2;
-  }
-  .t-polaroid .subtitle { margin-top: 10cqw; font-size: 3.2cqw; }
+  .t-polaroid .frame { width: 70cqw; height: 92cqw; padding: 3.5cqw 3.5cqw 18cqw; --r: -3deg; }
+  .t-polaroid .frame .cap { position: absolute; left: 0; right: 0; bottom: 4cqw; font-size: 8.5cqw; }
+  .t-polaroid .label { margin-top: 9cqw; font-size: 3cqw; }
 
   /* end */
   .t-end { justify-content: center; }
-  .t-end .slot { width: 46cqw; height: 46cqw; border-radius: 50%; }
-  .t-end .script { margin-top: 7cqw; font-size: 10cqw; }
-  .t-end .subtitle { margin-top: 2cqw; font-size: 3.2cqw; }
+  .t-end .frame { width: 48cqw; height: 48cqw; }
+  .t-end .hand { margin-top: 7cqw; font-size: 12cqw; }
+  .t-end .label { margin-top: 3cqw; font-size: 2.8cqw; }
 
   /* ---------- Add page ---------- */
-  .add-wrap { display: flex; justify-content: center; margin: 0 auto 64px; padding: 0 16px; }
+  .add-wrap { position: relative; z-index: 1; display: flex; justify-content: center; margin: 0 auto 120px; padding: 0 16px; }
   .add-card {
-    border: 2px dashed var(--blush); background: rgba(255,255,255,.5); color: var(--rose);
-    border-radius: 14px; padding: 18px 28px; font-weight: 700; font-size: 14px;
+    border: 2px dashed var(--sky); background: rgba(255,255,255,.6); color: var(--blue);
+    border-radius: 14px; padding: 14px 26px; font-family: var(--hand); font-weight: 700; font-size: 24px;
+    transition: transform .2s;
   }
-  .add-card:hover { background: #fff; border-color: var(--rose); }
+  .add-card:hover { background: #fff; border-color: var(--blue); transform: rotate(-2deg) scale(1.04); }
 
   /* ---------- Modal ---------- */
   .modal {
     position: fixed; inset: 0; z-index: 50; display: none;
-    background: rgba(74, 42, 53, .35); backdrop-filter: blur(4px);
+    background: rgba(28, 53, 87, .35); backdrop-filter: blur(4px);
     align-items: center; justify-content: center; padding: 16px;
   }
   .modal.open { display: flex; }
   .modal-box {
     background: #fff; border-radius: 18px; padding: 22px; width: min(640px, 100%);
     max-height: 90vh; overflow: auto; box-shadow: var(--shadow);
+    animation: pop .35s cubic-bezier(.2, 1.4, .4, 1) both;
   }
-  .modal-box h2 { margin: 0 0 4px; font-size: 18px; color: var(--rose-deep); }
-  .modal-box p { margin: 0 0 16px; font-size: 13px; color: var(--ink-soft); }
-  .tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+  .modal-box h2 { margin: 0 0 14px; font-family: var(--hand); font-size: 30px; color: var(--blue-deep); }
+  .modal-box p { margin: -8px 0 16px; font-size: 13px; color: var(--ink-soft); }
+  .tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
   .tpl {
-    border: 1px solid var(--line); border-radius: 12px; background: var(--blush-2);
-    padding: 12px; text-align: left; display: flex; flex-direction: column; gap: 8px;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--sky-2);
+    padding: 12px; text-align: left; display: flex; flex-direction: column; gap: 8px; transition: transform .2s;
   }
-  .tpl:hover { border-color: var(--rose); background: #fff; }
+  .tpl:hover { border-color: var(--blue); background: #fff; transform: rotate(-1.5deg) translateY(-2px); }
   .tpl .mini { aspect-ratio: 148/210; background: #fff; border-radius: 4px; display: grid; place-items: center; font-size: 26px; }
   .tpl b { font-size: 13px; color: var(--ink); }
-  .tpl span { font-size: 11px; color: var(--ink-soft); line-height: 1.4; }
-  .modal-foot { display: flex; justify-content: flex-end; margin-top: 16px; }
+  .modal-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  .confirm-box { width: min(380px, 100%); }
 
-  /* floating "add photos" button, thumb-friendly on phones */
+  /* floating add-photo button */
   .fab {
     position: fixed; z-index: 30;
     right: calc(18px + env(safe-area-inset-right, 0px));
     bottom: calc(18px + env(safe-area-inset-bottom, 0px));
     border: 0; border-radius: 999px; padding: 14px 20px;
-    background: var(--rose); color: #fff; font-weight: 700; font-size: 14px;
-    box-shadow: 0 10px 24px -8px rgba(166, 30, 77, .6);
+    background: var(--blue); color: #fff; font-weight: 800; font-size: 14px;
+    box-shadow: 0 10px 24px -8px rgba(27, 79, 159, .7);
     display: inline-flex; align-items: center; gap: 8px;
+    animation: bob 3s ease-in-out infinite;
   }
-  .fab:hover { background: var(--rose-deep); }
+  .fab:hover { background: var(--blue-deep); }
   .fab svg { width: 20px; height: 20px; }
-  .confirm-box { width: min(380px, 100%); }
-  .confirm-box .modal-foot { gap: 8px; }
 
   .toast {
     position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px);
@@ -287,60 +329,73 @@
   }
   .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-  footer { text-align: center; font-size: 12px; color: var(--ink-soft); padding: 0 16px 96px; }
+  /* little hearts that burst out when a photo lands */
+  .burst { position: fixed; z-index: 70; pointer-events: none; font-size: 18px; color: var(--blue); animation: burst 1s ease-out forwards; }
+
   .framed .local-only { display: none !important; }
 
   @media (max-width: 560px) {
     .topbar { position: static; }
-    .brand small { display: none; }
-    .btn { padding: 7px 11px; font-size: 12px; }
+    .btn { padding: 6px 11px; font-size: 12px; }
+  }
+
+  /* ---------- Animations ---------- */
+  @keyframes pop { from { opacity: 0; transform: translateY(18px) scale(.96); } to { opacity: 1; transform: none; } }
+  @keyframes beat { 0%, 100% { transform: scale(1); } 15% { transform: scale(1.18); } 30% { transform: scale(1); } 45% { transform: scale(1.12); } }
+  @keyframes wiggle { 0%, 100% { transform: rotate(var(--rot, 8deg)); } 50% { transform: rotate(calc(var(--rot, 8deg) * -1)); } }
+  @keyframes twinkle { 0%, 100% { transform: scale(1) rotate(0); opacity: 1; } 50% { transform: scale(.7) rotate(25deg); opacity: .55; } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes drift { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-24px) rotate(12deg); } }
+  @keyframes develop { from { opacity: 0; filter: brightness(1.8) saturate(0); } to { opacity: 1; filter: none; } }
+  @keyframes burst {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
+    to { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.3) rotate(var(--rz)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 
   /* ---------- Print: one book page per paper page ---------- */
   @page { size: 148mm 210mm; margin: 0; }
   @media print {
     body { background: #fff; }
-    .topbar, .hint, .sheet-bar, .add-wrap, .modal, .toast, .fab, footer, .slot .tools { display: none !important; }
+    .topbar, .sky, .sheet-bar, .add-wrap, .modal, .toast, .fab, .burst, .slot .tools { display: none !important; }
     .book { display: block; margin: 0; padding: 0; max-width: none; }
-    .sheet { display: block; break-after: page; page-break-after: always; }
+    .sheet { display: block; break-after: page; page-break-after: always; animation: none; }
     .sheet:last-child { break-after: auto; page-break-after: auto; }
-    .page { width: 148mm; height: 210mm; aspect-ratio: auto; box-shadow: none; border-radius: 0; }
-    .slot:not(.filled) { border-color: #f0d3dc; }
+    .sheet .page { width: 148mm; height: 210mm; aspect-ratio: auto; box-shadow: none; border-radius: 0; transform: none !important; }
     .slot:not(.filled) .ph { visibility: hidden; }
     [data-text]:empty::before { content: ""; }
-    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    *, *::before, *::after { animation: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 </head>
 <body>
 
+<div class="sky" aria-hidden="true">
+  <svg style="left:4%;top:18%;width:34px;animation-delay:-2s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>
+  <svg style="right:5%;top:30%;width:28px;animation-delay:-5s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2H22l-6 4.6 2.3 7.2L12 16.6 5.7 21l2.3-7.2-6-4.6h7.6z"/></svg>
+  <svg style="left:8%;top:72%;width:24px;animation-delay:-7s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z"/></svg>
+  <svg style="right:9%;top:80%;width:30px;animation-delay:-1s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>
+  <svg style="left:46%;top:94%;width:22px;animation-delay:-4s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z"/></svg>
+</div>
+
 <header class="topbar">
   <div class="brand">
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="#d6336c" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>
-    <div>
-      <h1>THE BOOK OF US</h1>
-      <small>Photobook pasangan — tempel fotomu sendiri</small>
-    </div>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>
+    <h1>The Book of <em>Us</em></h1>
   </div>
   <div class="actions">
-    <button class="btn local-only" id="btnBackup" title="Unduh cadangan (.json)">⬇ Cadangan</button>
-    <button class="btn" id="btnRestore" title="Buka cadangan (.json)">⬆ Buka</button>
-    <button class="btn" id="btnReset" title="Kembalikan ke template awal">↺ Reset</button>
-    <button class="btn primary local-only" id="btnPrint">🖨 Simpan PDF</button>
+    <button class="btn local-only" id="btnBackup" title="Unduh cadangan (.json)">Cadangan</button>
+    <button class="btn" id="btnRestore" title="Buka cadangan (.json)">Buka</button>
+    <button class="btn" id="btnReset" title="Kembalikan ke template awal">Reset</button>
+    <button class="btn primary local-only" id="btnPrint">Simpan PDF</button>
   </div>
 </header>
 
-<p class="hint">
-  <b>Dari HP:</b> ketuk tombol <b>Tambah foto</b> lalu pilih banyak foto dari galeri sekaligus (atau ambil dari kamera). Foto langsung mengisi kotak yang masih kosong.
-  Ketuk satu kotak untuk mengisi atau mengganti fotonya; ketuk foto sekali lalu geser untuk mengatur posisinya.
-  <b>Di komputer:</b> klik, seret file, atau tempel (Ctrl/⌘+V). <b>Ketuk tulisan</b> untuk mengganti nama &amp; kata-kata. Semua tersimpan otomatis di browser ini.
-</p>
-
 <main class="book" id="book"></main>
 
-<div class="add-wrap"><button class="add-card" id="btnAdd">＋ Tambah halaman</button></div>
-
-<footer><span class="local-only">Dibuat dengan ♥ — tekan “Simpan PDF” lalu pilih “Save as PDF” untuk mencetak.</span></footer>
+<div class="add-wrap"><button class="add-card" id="btnAdd">+ halaman baru</button></div>
 
 <button class="fab" id="btnBulk" aria-label="Tambah foto dari galeri atau kamera">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/></svg>
@@ -351,14 +406,13 @@
   <div class="modal-box confirm-box">
     <h2 id="confirmMsg">Yakin?</h2>
     <p id="confirmSub"></p>
-    <div class="modal-foot"><button class="btn" id="confirmNo">Batal</button><button class="btn primary" id="confirmYes">Ya, lanjut</button></div>
+    <div class="modal-foot"><button class="btn" id="confirmNo">Batal</button><button class="btn primary" id="confirmYes">Ya</button></div>
   </div>
 </div>
 
 <div class="modal" id="tplModal" role="dialog" aria-modal="true" aria-labelledby="tplTitle">
   <div class="modal-box">
-    <h2 id="tplTitle">Pilih template halaman</h2>
-    <p>Halaman baru akan ditambahkan sebelum halaman penutup.</p>
+    <h2 id="tplTitle">Halaman baru</h2>
     <div class="tpl-grid" id="tplGrid"></div>
     <div class="modal-foot"><button class="btn" id="tplClose">Batal</button></div>
   </div>
@@ -374,58 +428,92 @@
   "use strict";
 
   /* ================= Templates ================= */
-  const HEART = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>';
-  const mark = (key = "mark") => `<div class="mark">${HEART}<div class="mark-text" data-text="${key}" data-ph="tulis sesuatu"></div></div>`;
-  const slot = (key, cls = "") => `<div class="slot ${cls}" data-slot="${key}"></div>`;
-  const text = (key, cls, ph, tag = "div") => `<${tag} class="${cls}" data-text="${key}" data-ph="${ph}"></${tag}>`;
+  const HEART_PATH = "M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z";
+  const DOODLES = { // blue-ink doodles, drawn as outlines like a pen sketch
+    heart: `<path d="${HEART_PATH}"/>`,
+    star: '<path d="M12 2.5l2.6 6.3 6.8.5-5.2 4.4 1.6 6.6L12 16.8l-5.8 3.5 1.6-6.6-5.2-4.4 6.8-.5z"/>',
+    spark: '<path d="M12 1c.8 6.2 4.8 10.2 11 11-6.2.8-10.2 4.8-11 11-.8-6.2-4.8-10.2-11-11 6.2-.8 10.2-4.8 11-11z"/>',
+    flower: '<circle cx="12" cy="12" r="2.6"/><path d="M12 9.4c-2-4.6 2-7.4 2.6-3.4M14.6 12c4.6-2 7.4 2 3.4 2.6M12 14.6c2 4.6-2 7.4-2.6 3.4M9.4 12c-4.6 2-7.4-2-3.4-2.6"/>',
+    swirl: '<path d="M2 19c5 0 8-3 7-6s-4-2-3 1 6 5 10 1 4-9 6-10"/>'
+  };
+  const doodle = (name, style, anim = "float", size = 8) =>
+    `<svg class="doodle ${anim}" style="${style};width:${size}cqw;height:${size}cqw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${DOODLES[name]}</svg>`;
+  const mark = (key = "mark") => `<div class="mark"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="${HEART_PATH}"/></svg><div class="mark-text" data-text="${key}" data-ph="♡"></div></div>`;
+  const slot = (key, cls = "", style = "", extra = "") =>
+    `<div class="frame ${cls}"${style ? ` style="${style}"` : ""}><div class="slot" data-slot="${key}"></div>${extra}</div>`;
+  const text = (key, cls, ph = "♡", tag = "div") => `<${tag} class="${cls}" data-text="${key}" data-ph="${ph}"></${tag}>`;
 
   const TEMPLATES = {
     cover: {
-      name: "Sampul", icon: "📖", desc: "Judul, nama berdua & satu foto",
-      defaults: { title: "The Book of Us", names: "Nama Kamu &amp; Nama Dia", mark: "est. 2024" },
-      html: () => text("title", "title", "Judul") + text("names", "subtitle", "Nama &amp; Nama") + slot("p1") + mark()
+      name: "Sampul", icon: "📖",
+      defaults: { title: "The Book of Us", names: "Kamu &amp; Aku", mark: "sejak hari pertama" },
+      html: () => text("title", "title") + text("names", "hand names") + slot("p1")
+        + doodle("spark", "left:12%;top:9%", "twinkle", 7) + doodle("heart", "right:7%;top:6%", "wiggle", 7)
+        + doodle("star", "left:9%;top:68%", "twinkle", 6) + doodle("swirl", "right:8%;top:72%", "float", 12) + mark()
     },
     collage: {
-      name: "Kolase 4 foto", icon: "🖼", desc: "Empat foto + tanda tangan",
-      defaults: { sig: "Nama &amp; Nama", mark: "our little moments" },
-      html: () => `<div class="grid"><div class="col c1">${slot("p1")}${slot("p2")}</div><div class="col c2">${slot("p3")}${slot("p4")}</div></div>`
-        + text("sig", "script", "Nama &amp; Nama") + mark()
+      name: "Kolase 4 foto", icon: "🖼",
+      defaults: { sig: "momen kecil kita", mark: "setiap detik bersamamu" },
+      html: () => `<div class="grid"><div class="col c1">${slot("p1", "", "--r:-3deg")}${slot("p2", "dots", "--r:2deg")}</div>`
+        + `<div class="col c2">${slot("p3", "corner", "--r:2deg")}${slot("p4", "", "--r:-2deg")}</div></div>`
+        + text("sig", "hand") + doodle("heart", "left:7%;top:6%", "beat", 7) + doodle("spark", "right:8%;top:5%", "twinkle", 6) + mark()
     },
     full: {
-      name: "Satu foto besar", icon: "🌅", desc: "Foto penuh + keterangan & tanggal",
-      defaults: { cap: "Pertemuan pertama", date: "14 · 02 · 2024" },
-      html: () => slot("p1") + text("cap", "script", "Keterangan") + text("date", "date", "tanggal")
+      name: "Satu foto besar", icon: "🌅",
+      defaults: { cap: "di sinilah semuanya dimulai", date: "14 · 02 · 2024", stamp: "since<br>2024" },
+      html: () => slot("p1", "", "", text("cap", "hand cap")) + text("date", "label")
+        + `<div class="stamp" style="right:6%;top:5%;--rot:12deg" data-text="stamp" data-ph="♡"></div>`
+        + doodle("flower", "left:6%;bottom:6%", "wiggle", 10)
     },
     duo: {
-      name: "Dua foto", icon: "👫", desc: "Dua foto berdampingan + cerita",
-      defaults: { head: "Kamu &amp; Aku", body: "Hari-hari biasa yang jadi luar biasa karena ada kamu." },
-      html: () => `<div class="row">${slot("p1")}${slot("p2")}</div>` + text("head", "subtitle", "Judul") + text("body", "body-text", "Cerita singkat…")
+      name: "Dua foto", icon: "👫",
+      defaults: { head: "kamu &amp; aku", body: "bersamamu, hari biasa terasa seperti cerita yang indah" },
+      html: () => `<div class="row">${slot("p1", "dots")}${slot("p2", "corner")}</div>` + text("head", "label") + text("body", "body-text")
+        + doodle("heart", "right:9%;top:6%", "beat", 7) + doodle("swirl", "left:6%;bottom:7%", "float", 13)
     },
     trio: {
-      name: "Tiga foto", icon: "🎞", desc: "Satu besar, dua kecil",
-      defaults: { cap: "Petualangan kita" },
-      html: () => slot("p1", "big") + `<div class="row">${slot("p2")}${slot("p3")}</div>` + text("cap", "script", "Keterangan")
+      name: "Tiga foto", icon: "🎞",
+      defaults: { cap: "petualangan kecil kita" },
+      html: () => slot("p1", "big") + `<div class="row">${slot("p2", "dots")}${slot("p3")}</div>` + text("cap", "hand")
+        + doodle("star", "left:6%;top:4%", "twinkle", 7) + doodle("heart", "right:8%;bottom:5%", "wiggle", 7)
     },
     polaroid: {
-      name: "Polaroid", icon: "📸", desc: "Foto ala polaroid miring",
-      defaults: { cap: "my favorite person", sub: "Tempat · Tahun" },
-      html: () => `<div class="pol"><div class="tape"></div>${slot("p1")}${text("cap", "script", "Keterangan")}</div>` + text("sub", "subtitle", "Tempat · Tahun")
+      name: "Polaroid", icon: "📸",
+      defaults: { cap: "my favorite person", sub: "selamanya kamu" },
+      html: () => slot("p1", "dots", "", text("cap", "hand cap")) + text("sub", "label")
+        + doodle("spark", "left:10%;top:9%", "twinkle", 8) + doodle("heart", "right:10%;top:12%", "beat", 8)
+        + doodle("flower", "right:9%;bottom:8%", "wiggle", 10)
     },
     letter: {
-      name: "Surat cinta", icon: "💌", desc: "Halaman tulisan + foto bulat kecil",
+      name: "Surat cinta", icon: "💌",
       defaults: {
         hi: "Untukmu,",
-        body: "Terima kasih sudah menjadi rumah paling nyaman untuk pulang. Setiap halaman di buku ini adalah potongan kecil dari cerita kita — dan aku tidak sabar menulis halaman-halaman berikutnya bersamamu.",
-        sign: "— dengan cinta"
+        body: "Terima kasih sudah menjadi rumah paling nyaman untuk pulang. Setiap halaman di buku ini adalah potongan kecil dari cerita kita, dan aku tidak sabar menulis halaman-halaman berikutnya bersamamu.",
+        sign: "dengan cinta ♡"
       },
-      html: () => `<div class="inner">${text("hi", "script", "Sapaan")}${text("body", "body-text", "Tulis suratmu di sini…")}${text("sign", "script sign", "Tanda tangan")}</div>` + slot("p1")
+      html: () => `<div class="lines"></div><div class="inner">${text("hi", "hand hi")}${text("body", "body-text")}${text("sign", "hand sign")}</div>`
+        + slot("p1", "corner", "--r:-5deg") + doodle("heart", "right:12%;bottom:12%", "beat", 9)
     },
     end: {
-      name: "Penutup", icon: "💗", desc: "Halaman akhir buku",
-      defaults: { end: "to be continued…", sub: "Bab berikutnya menanti kita" },
-      html: () => slot("p1") + text("end", "script", "Penutup") + text("sub", "subtitle", "Subjudul")
+      name: "Penutup", icon: "💙",
+      defaults: { end: "to be continued…", sub: "bab berikutnya, tetap bersamamu" },
+      html: () => slot("p1", "round notape") + text("end", "hand") + text("sub", "label")
+        + doodle("spark", "left:16%;top:20%", "twinkle", 7) + doodle("star", "right:15%;top:24%", "twinkle", 6)
+        + doodle("heart", "left:20%;bottom:16%", "float", 7) + doodle("spark", "right:18%;bottom:20%", "twinkle", 5)
     }
   };
+  // Earlier versions shipped instruction-like sample text; swap it for the new wording on load.
+  const OLD_SAMPLES = new Set(["Nama Kamu &amp; Nama Dia", "est. 2024", "Nama &amp; Nama", "our little moments", "Pertemuan pertama",
+    "Hari-hari biasa yang jadi luar biasa karena ada kamu.", "Kamu &amp; Aku", "Petualangan kita", "Tempat · Tahun",
+    "Bab berikutnya menanti kita", "— dengan cinta"]);
+  function upgrade(book) {
+    book.pages.forEach(p => {
+      const d = (TEMPLATES[p.type] || {}).defaults || {};
+      p.texts = p.texts || {};
+      for (const k in d) if (p.texts[k] === undefined || OLD_SAMPLES.has(p.texts[k])) p.texts[k] = d[k];
+    });
+    return book;
+  }
 
   const DEFAULT_ORDER = ["cover", "collage", "full", "duo", "letter", "trio", "polaroid", "end"];
   const uid = () => Math.random().toString(36).slice(2, 10);
@@ -484,7 +572,7 @@
     const last = state.pages.length - 1;
     sheet.innerHTML = `
       <div class="sheet-bar">
-        <span class="num">HALAMAN ${i + 1} / ${state.pages.length} · ${tpl.name.toUpperCase()}</span>
+        <span class="num">${i + 1}</span>
         <button class="icon-btn" data-act="up" title="Pindah ke atas" ${i === 0 ? "disabled" : ""}>↑</button>
         <button class="icon-btn" data-act="down" title="Pindah ke bawah" ${i === last ? "disabled" : ""}>↓</button>
         <button class="icon-btn" data-act="dup" title="Duplikat">⧉</button>
@@ -517,7 +605,7 @@
       el.innerHTML = `<img alt="" src="${ph.src}" style="object-position:${ph.x}% ${ph.y}%">
         <div class="tools"><button data-tool="replace" title="Ganti foto">⟳</button><button data-tool="remove" title="Hapus foto">✕</button></div>`;
     } else {
-      el.innerHTML = `<div class="ph"><span>＋</span>Klik / tempel foto</div>`;
+      el.innerHTML = `<div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="4"/></svg></div>`;
     }
   }
 
@@ -595,6 +683,7 @@
       p.photos[el.dataset.slot] = { src, x: 50, y: 50 };
       paintSlot(el, p);
       setActive(el, p);
+      burst(el);
       save();
     } catch {
       el.querySelector(".loading")?.remove();
@@ -666,7 +755,7 @@
   const modal = document.getElementById("tplModal");
   const tplGrid = document.getElementById("tplGrid");
   tplGrid.innerHTML = Object.entries(TEMPLATES).map(([k, t]) =>
-    `<button class="tpl" data-tpl="${k}"><div class="mini">${t.icon}</div><b>${t.name}</b><span>${t.desc}</span></button>`).join("");
+    `<button class="tpl" data-tpl="${k}"><div class="mini">${t.icon}</div><b>${t.name}</b></button>`).join("");
   document.getElementById("btnAdd").onclick = () => modal.classList.add("open");
   document.getElementById("tplClose").onclick = () => modal.classList.remove("open");
   modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("open"); });
@@ -680,7 +769,7 @@
     modal.classList.remove("open");
     render(); save();
     const el = book.querySelector(`[data-id="${pg.id}"]`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (el) { el.classList.add("new"); el.scrollIntoView({ behavior: "smooth", block: "center" }); }
   });
 
   /* ================= Confirm dialog (native confirm() is blocked in some viewers) ================= */
@@ -730,7 +819,7 @@
     render(); save();
     toast(ok === files.length ? `${ok} foto berhasil ditambahkan ♥` : `${ok} dari ${files.length} foto berhasil ditambahkan. Sisanya formatnya tidak didukung.`);
     const el = firstId && book.querySelector(`[data-id="${firstId}"]`);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) { el.scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => burst(el.querySelector(".page")), 500); }
   });
 
   /* ================= Toolbar ================= */
@@ -764,10 +853,26 @@
       const data = JSON.parse(await f.text());
       if (!Array.isArray(data.pages)) throw 0;
       data.pages = data.pages.filter(p => TEMPLATES[p.type]).map(p => ({ id: p.id || uid(), type: p.type, texts: p.texts || {}, photos: p.photos || {} }));
-      state = { v: 1, pages: data.pages.length ? data.pages : freshBook().pages };
+      state = upgrade({ v: 1, pages: data.pages.length ? data.pages : freshBook().pages });
       render(); save(); toast("Cadangan berhasil dibuka.");
     } catch { toast("File cadangan tidak valid."); }
   });
+
+  // A handful of hearts and sparkles fly out of an element.
+  function burst(el) {
+    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    for (let n = 0; n < 10; n++) {
+      const b = document.createElement("span");
+      b.className = "burst";
+      b.textContent = n % 3 ? "♥" : "✦";
+      const a = (n / 10) * Math.PI * 2 + Math.random() * .5, d = 50 + Math.random() * 60;
+      b.style.cssText = `left:${cx}px;top:${cy}px;--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d}px;--rz:${(Math.random() * 80 - 40) | 0}deg;font-size:${14 + Math.random() * 12}px`;
+      document.body.appendChild(b);
+      setTimeout(() => b.remove(), 1100);
+    }
+  }
 
   let toastTimer;
   function toast(msg) {
@@ -777,9 +882,11 @@
   }
 
   /* ================= Boot ================= */
+  book.classList.add("intro");
   render();
   load().then(saved => {
-    if (saved && Array.isArray(saved.pages) && saved.pages.length) { state = saved; render(); }
+    if (saved && Array.isArray(saved.pages) && saved.pages.length) { state = upgrade(saved); render(); }
+    setTimeout(() => book.classList.remove("intro"), 1500);
   });
 })();
 </script>
