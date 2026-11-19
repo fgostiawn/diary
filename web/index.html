@@ -14,6 +14,10 @@
   const RESET = ((document.head && document.head.querySelector("style")) || {}).textContent || "";
   const PAGE_HEAD = '<title>The Book of Us</title><meta name="claude:viewport-fit-sides" content="cover"><meta name="description" content="Scrapbook kenangan berdua bernuansa putih-biru."><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&amp;family=DM+Serif+Display:ital@0;1&amp;family=Nunito:wght@600;700;800&amp;display=swap" rel="stylesheet">';
   const SHARE_URL = "https://claude.ai/artifact/7bhWTgRL6xhBVE5iTsFrqn";
+  // The partner's link: this hash always opens the finished book, even for people who can edit it.
+  const VIEW_HASH = "#untukmu";
+  const PARTNER_URL = SHARE_URL + VIEW_HASH;
+  const forceView = () => location.hash === VIEW_HASH;
 
   const CSS = String.raw`
   /* Scrapbook on blue dotted paper: white photo prints, washi tape, blue ink doodles. */
@@ -985,7 +989,6 @@
     clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
   }
 
-  /* ================= Boot ================= */
   /* ================= Sharing the finished book ================= */
   // Only text formatting the editor itself produces survives; everything else becomes plain text.
   function cleanHTML(html) {
@@ -1092,17 +1095,25 @@
 
   const shareModal = document.getElementById("shareModal");
   const shareLink = document.getElementById("shareLink");
-  shareLink.value = SHARE_URL;
+  shareLink.value = PARTNER_URL;
   document.getElementById("shareClose").onclick = () => shareModal.classList.remove("open");
   document.getElementById("btnCopy").onclick = () => {
     const done = () => toast("Link disalin ♡");
     const fallback = () => { shareLink.focus(); shareLink.select(); };
-    try { navigator.clipboard.writeText(SHARE_URL).then(done, fallback); } catch { fallback(); }
+    try { navigator.clipboard.writeText(PARTNER_URL).then(done, fallback); } catch { fallback(); }
   };
+
+  // Switching between the editor link and the partner link without a reload.
+  window.addEventListener("hashchange", () => {
+    if (forceView()) {
+      if (mode !== "view") { viewBook = SHARED || state; btnBackEdit.hidden = true; setMode("view"); }
+    } else if (mode === "view" && (canEdit || !SHARED)) { btnBackEdit.hidden = true; envelope.hidden = true; setMode("edit"); }
+  });
 
   /* ================= Boot ================= */
   book.classList.add("intro");
   if (SHARED) { viewBook = SHARED; envelope.hidden = false; setMode("view"); }
+  else if (forceView()) { viewBook = state; setMode("view"); }
   else render();
 
   let justShared = false;
@@ -1111,16 +1122,17 @@
   load().then(saved => {
     if (saved && Array.isArray(saved.pages) && saved.pages.length) state = upgrade(saved);
     else if (SHARED) state = upgrade(JSON.parse(JSON.stringify(SHARED)));
-    if (mode === "edit") render();
+    if (!SHARED && mode === "view") viewBook = state;
+    render();
     setTimeout(() => book.classList.remove("intro"), 1500);
   });
 
   // People who can edit this book get the editor; everyone else keeps the finished book.
+  let canEdit = false;
   use("user").then(async u => {
-    let canEdit = false;
     try { canEdit = u ? await u.canEdit() : false; } catch { canEdit = false; }
     if (!canEdit) return;
-    if (mode === "view" && btnBackEdit.hidden) { envelope.hidden = true; setMode("edit"); }
+    if (mode === "view" && btnBackEdit.hidden && !forceView()) { envelope.hidden = true; setMode("edit"); }
     const [artifact, assets] = await Promise.all([use("artifact"), use("assets")]);
     if (artifact && assets && SRC) btnShare.hidden = false;
     if (justShared) shareModal.classList.add("open");
