@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Book of Us</title>
+<meta name="description" content="Photobook pasangan bernuansa pink — tempel foto, ubah tulisan, lalu simpan sebagai PDF.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Montserrat:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #fbeef2;
+    --bg-2: #f7dfe7;
+    --paper: #fffafb;
+    --ink: #4a2a35;
+    --ink-soft: #8a6270;
+    --rose: #d6336c;
+    --rose-deep: #a61e4d;
+    --blush: #f6c3d3;
+    --blush-2: #fde4ec;
+    --line: #efd0da;
+    --shadow: 0 10px 30px -12px rgba(166, 30, 77, .28), 0 2px 6px rgba(166, 30, 77, .08);
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --sans: "Montserrat", system-ui, sans-serif;
+    --script: "Great Vibes", cursive;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background:
+      radial-gradient(circle at 15% 10%, #fff 0, transparent 40%),
+      radial-gradient(circle at 85% 90%, var(--bg-2) 0, transparent 45%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+  button { font: inherit; cursor: pointer; }
+
+  /* ---------- Header / toolbar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 12px 16px;
+    background: rgba(251, 238, 242, .88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 8px; margin-right: auto; }
+  .brand h1 {
+    margin: 0; font-size: 15px; letter-spacing: .18em; font-weight: 800; color: var(--rose);
+  }
+  .brand small { display: block; font-size: 11px; color: var(--ink-soft); letter-spacing: .02em; font-weight: 500; }
+  .btn {
+    border: 1px solid var(--line); background: #fff; color: var(--ink);
+    padding: 8px 14px; border-radius: 999px; font-size: 13px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .btn:hover { border-color: var(--blush); background: var(--blush-2); }
+  .btn:active { transform: scale(.97); }
+  .btn.primary { background: var(--rose); color: #fff; border-color: var(--rose); }
+  .btn.primary:hover { background: var(--rose-deep); border-color: var(--rose-deep); }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .hint {
+    max-width: 760px; margin: 18px auto 0; padding: 0 16px;
+    font-size: 13px; line-height: 1.6; color: var(--ink-soft); text-align: center;
+  }
+  .hint b { color: var(--rose-deep); }
+
+  /* ---------- Book ---------- */
+  .book {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 36px 28px;
+    max-width: 1180px; margin: 24px auto 40px; padding: 0 16px;
+  }
+  .sheet { display: flex; flex-direction: column; gap: 10px; }
+  .sheet-bar {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 12px; color: var(--ink-soft); font-weight: 600;
+  }
+  .sheet-bar .num { margin-right: auto; letter-spacing: .08em; }
+  .icon-btn {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid transparent; background: transparent; color: var(--ink-soft);
+    display: grid; place-items: center; font-size: 14px;
+  }
+  .icon-btn:hover { background: #fff; border-color: var(--line); color: var(--rose); }
+  .icon-btn:disabled { opacity: .3; pointer-events: none; }
+
+  .page {
+    container-type: inline-size;
+    position: relative;
+    aspect-ratio: 148 / 210;
+    background: var(--paper);
+    box-shadow: var(--shadow);
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .page::after { /* subtle paper border */
+    content: ""; position: absolute; inset: 3.2cqw; border: 1px solid #f6dde5; pointer-events: none; border-radius: 2px;
+  }
+
+  /* editable text */
+  [data-text] { outline: none; border-radius: 3px; transition: background .15s; position: relative; z-index: 1; }
+  [data-text]:hover { background: rgba(246, 195, 211, .25); }
+  [data-text]:focus { background: rgba(246, 195, 211, .35); }
+  [data-text]:empty::before { content: attr(data-ph); color: #d9a9b8; }
+
+  /* photo slot */
+  .slot {
+    position: relative; overflow: hidden;
+    background: repeating-linear-gradient(45deg, #fdf1f5 0 8px, #fbe7ee 8px 16px);
+    border: 1.5px dashed var(--blush);
+    display: grid; place-items: center; text-align: center;
+    color: var(--rose); cursor: pointer; z-index: 1;
+    transition: border-color .15s, box-shadow .15s;
+    touch-action: none;
+  }
+  .slot:hover, .slot.active { border-color: var(--rose); }
+  .slot.dragover { box-shadow: inset 0 0 0 3px var(--rose); }
+  .slot .ph { font-size: 3cqw; font-weight: 600; line-height: 1.4; padding: 6px; pointer-events: none; }
+  .slot .ph span { display: block; font-size: 6cqw; line-height: 1; margin-bottom: .6cqw; }
+  .slot.filled { border: 0; background: #f3e4e9; cursor: grab; }
+  .slot.filled.panning { cursor: grabbing; }
+  .slot img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; pointer-events: none; user-select: none; -webkit-user-drag: none;
+  }
+  .slot .tools {
+    position: absolute; top: 6px; right: 6px; display: flex; gap: 4px;
+    opacity: 0; transition: opacity .15s;
+  }
+  .slot.filled:hover .tools, .slot.filled.active .tools { opacity: 1; }
+  .slot .tools button {
+    width: 26px; height: 26px; border-radius: 50%; border: 0;
+    background: rgba(255,255,255,.92); color: var(--rose-deep); font-size: 13px;
+    display: grid; place-items: center; box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  }
+  @media (hover: none) { .slot.filled .tools { opacity: 1; } }
+
+  /* ---------- Shared page pieces ---------- */
+  .title {
+    font-family: var(--sans); font-weight: 800; color: var(--rose);
+    letter-spacing: .14em; text-transform: uppercase; text-align: center;
+  }
+  .subtitle {
+    font-family: var(--serif); font-weight: 600; color: var(--rose-deep);
+    letter-spacing: .14em; text-transform: uppercase; text-align: center;
+  }
+  .script { font-family: var(--script); color: var(--rose-deep); text-align: center; line-height: 1.1; }
+  .body-text { font-family: var(--serif); color: var(--ink); line-height: 1.55; }
+  .mark {
+    position: absolute; bottom: 6.5cqw; left: 0; right: 0;
+    display: flex; flex-direction: column; align-items: center; gap: .6cqw;
+    color: var(--rose); z-index: 1;
+  }
+  .mark svg { width: 7cqw; height: 7cqw; }
+  .mark .mark-text { font-family: var(--serif); font-style: italic; font-size: 3.2cqw; color: var(--ink-soft); }
+
+  /* cover */
+  .t-cover .title { margin-top: 22cqw; font-size: 6.2cqw; }
+  .t-cover .subtitle { margin-top: 3cqw; font-size: 3.3cqw; }
+  .t-cover .slot { margin-top: 8cqw; width: 66cqw; height: 52cqw; }
+
+  /* collage */
+  .t-collage .grid {
+    margin-top: 22cqw; width: 72cqw; height: 72cqw;
+    display: flex; gap: 3cqw;
+  }
+  .t-collage .col { display: flex; flex-direction: column; gap: 3cqw; }
+  .t-collage .col .slot { width: 100%; }
+  .t-collage .c1 .slot:first-child { flex: 56; }
+  .t-collage .c1 .slot:last-child  { flex: 44; }
+  .t-collage .c2 .slot:first-child { flex: 44; }
+  .t-collage .c2 .slot:last-child  { flex: 56; }
+  .t-collage .c1 { flex: 42; } .t-collage .c2 { flex: 58; }
+  .t-collage .script { margin-top: 6cqw; font-size: 9cqw; }
+
+  /* full */
+  .t-full .slot { margin-top: 12cqw; width: 76cqw; height: 100cqw; }
+  .t-full .script { margin-top: 6cqw; font-size: 8cqw; }
+  .t-full .date { margin-top: 1.5cqw; font-family: var(--sans); font-size: 2.8cqw; letter-spacing: .3em; color: var(--ink-soft); text-transform: uppercase; }
+
+  /* duo */
+  .t-duo .row { margin-top: 14cqw; width: 76cqw; display: flex; gap: 3cqw; }
+  .t-duo .row .slot { flex: 1; height: 62cqw; }
+  .t-duo .row .slot:last-child { margin-top: 12cqw; }
+  .t-duo .subtitle { margin-top: 7cqw; font-size: 3.4cqw; }
+  .t-duo .body-text { margin-top: 3cqw; width: 70cqw; font-size: 4cqw; text-align: center; font-style: italic; }
+
+  /* trio */
+  .t-trio .slot.big { margin-top: 12cqw; width: 76cqw; height: 56cqw; }
+  .t-trio .row { margin-top: 3cqw; width: 76cqw; display: flex; gap: 3cqw; }
+  .t-trio .row .slot { flex: 1; height: 40cqw; }
+  .t-trio .script { margin-top: 5cqw; font-size: 8cqw; }
+
+  /* letter */
+  .t-letter .inner { width: 100%; padding: 18cqw 13cqw 0; display: flex; flex-direction: column; }
+  .t-letter .script { text-align: left; font-size: 11cqw; }
+  .t-letter .body-text { margin-top: 4cqw; font-size: 4.3cqw; white-space: pre-wrap; flex: 0 1 auto; max-height: 92cqw; overflow: hidden; }
+  .t-letter .sign { margin-top: 5cqw; text-align: right; font-size: 8cqw; }
+  .t-letter .slot { position: absolute; left: 13cqw; bottom: 16cqw; width: 30cqw; height: 30cqw; border-radius: 50%; }
+
+  /* polaroid */
+  .t-polaroid { justify-content: center; }
+  .t-polaroid .pol {
+    background: #fff; padding: 3.5cqw 3.5cqw 0; box-shadow: 0 6px 20px -8px rgba(166,30,77,.35);
+    width: 70cqw; transform: rotate(-3deg); position: relative; z-index: 1;
+  }
+  .t-polaroid .pol .slot { width: 100%; height: 72cqw; }
+  .t-polaroid .pol .script { font-size: 7.5cqw; padding: 3cqw 0 4cqw; }
+  .t-polaroid .tape {
+    position: absolute; top: -3cqw; left: 50%; width: 22cqw; height: 6cqw; transform: translateX(-50%) rotate(4deg);
+    background: rgba(246, 195, 211, .75); z-index: 2;
+  }
+  .t-polaroid .subtitle { margin-top: 10cqw; font-size: 3.2cqw; }
+
+  /* end */
+  .t-end { justify-content: center; }
+  .t-end .slot { width: 46cqw; height: 46cqw; border-radius: 50%; }
+  .t-end .script { margin-top: 7cqw; font-size: 10cqw; }
+  .t-end .subtitle { margin-top: 2cqw; font-size: 3.2cqw; }
+
+  /* ---------- Add page ---------- */
+  .add-wrap { display: flex; justify-content: center; margin: 0 auto 64px; padding: 0 16px; }
+  .add-card {
+    border: 2px dashed var(--blush); background: rgba(255,255,255,.5); color: var(--rose);
+    border-radius: 14px; padding: 18px 28px; font-weight: 700; font-size: 14px;
+  }
+  .add-card:hover { background: #fff; border-color: var(--rose); }
+
+  /* ---------- Modal ---------- */
+  .modal {
+    position: fixed; inset: 0; z-index: 50; display: none;
+    background: rgba(74, 42, 53, .35); backdrop-filter: blur(4px);
+    align-items: center; justify-content: center; padding: 16px;
+  }
+  .modal.open { display: flex; }
+  .modal-box {
+    background: #fff; border-radius: 18px; padding: 22px; width: min(640px, 100%);
+    max-height: 90vh; overflow: auto; box-shadow: var(--shadow);
+  }
+  .modal-box h2 { margin: 0 0 4px; font-size: 18px; color: var(--rose-deep); }
+  .modal-box p { margin: 0 0 16px; font-size: 13px; color: var(--ink-soft); }
+  .tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+  .tpl {
+    border: 1px solid var(--line); border-radius: 12px; background: var(--blush-2);
+    padding: 12px; text-align: left; display: flex; flex-direction: column; gap: 8px;
+  }
+  .tpl:hover { border-color: var(--rose); background: #fff; }
+  .tpl .mini { aspect-ratio: 148/210; background: #fff; border-radius: 4px; display: grid; place-items: center; font-size: 26px; }
+  .tpl b { font-size: 13px; color: var(--ink); }
+  .tpl span { font-size: 11px; color: var(--ink-soft); line-height: 1.4; }
+  .modal-foot { display: flex; justify-content: flex-end; margin-top: 16px; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 20px);
+    background: var(--ink); color: #fff; padding: 10px 16px; border-radius: 999px;
+    font-size: 13px; opacity: 0; transition: .25s; z-index: 60; pointer-events: none;
+    max-width: calc(100% - 32px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  footer { text-align: center; font-size: 12px; color: var(--ink-soft); padding: 0 16px 32px; }
+
+  @media (max-width: 560px) {
+    .brand small { display: none; }
+    .btn { padding: 7px 11px; font-size: 12px; }
+  }
+
+  /* ---------- Print: one book page per paper page ---------- */
+  @page { size: 148mm 210mm; margin: 0; }
+  @media print {
+    body { background: #fff; }
+    .topbar, .hint, .sheet-bar, .add-wrap, .modal, .toast, footer, .slot .tools { display: none !important; }
+    .book { display: block; margin: 0; padding: 0; max-width: none; }
+    .sheet { display: block; break-after: page; page-break-after: always; }
+    .sheet:last-child { break-after: auto; page-break-after: auto; }
+    .page { width: 148mm; height: 210mm; aspect-ratio: auto; box-shadow: none; border-radius: 0; }
+    .slot:not(.filled) { border-color: #f0d3dc; }
+    .slot:not(.filled) .ph { visibility: hidden; }
+    [data-text]:empty::before { content: ""; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="#d6336c" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>
+    <div>
+      <h1>THE BOOK OF US</h1>
+      <small>Photobook pasangan — tempel fotomu sendiri</small>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn" id="btnBackup" title="Unduh cadangan (.json)">⬇ Cadangan</button>
+    <button class="btn" id="btnRestore" title="Buka cadangan (.json)">⬆ Buka</button>
+    <button class="btn" id="btnReset" title="Kembalikan ke template awal">↺ Reset</button>
+    <button class="btn primary" id="btnPrint">🖨 Simpan PDF</button>
+  </div>
+</header>
+
+<p class="hint">
+  <b>Klik kotak foto</b> untuk memilih gambar, <b>seret file</b> ke kotak, atau <b>tempel (Ctrl/⌘+V)</b> gambar yang sudah di-copy.
+  Geser foto di dalam kotak untuk mengatur posisinya. <b>Klik tulisan</b> untuk mengganti nama &amp; kata-kata. Semua tersimpan otomatis di browser ini.
+</p>
+
+<main class="book" id="book"></main>
+
+<div class="add-wrap"><button class="add-card" id="btnAdd">＋ Tambah halaman</button></div>
+
+<footer>Dibuat dengan ♥ — tekan “Simpan PDF” lalu pilih “Save as PDF” untuk mencetak.</footer>
+
+<div class="modal" id="tplModal" role="dialog" aria-modal="true" aria-labelledby="tplTitle">
+  <div class="modal-box">
+    <h2 id="tplTitle">Pilih template halaman</h2>
+    <p>Halaman baru akan ditambahkan sebelum halaman penutup.</p>
+    <div class="tpl-grid" id="tplGrid"></div>
+    <div class="modal-foot"><button class="btn" id="tplClose">Batal</button></div>
+  </div>
+</div>
+
+<input type="file" id="fileInput" accept="image/*" hidden>
+<input type="file" id="restoreInput" accept="application/json,.json" hidden>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ================= Templates ================= */
+  const HEART = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.6 4.5c2.1 0 3.6 1.2 4.4 2.6.8-1.4 2.3-2.6 4.4-2.6 3.6 0 5.7 3.9 4.2 7.3C19.5 16.4 12 21 12 21z"/></svg>';
+  const mark = (key = "mark") => `<div class="mark">${HEART}<div class="mark-text" data-text="${key}" data-ph="tulis sesuatu"></div></div>`;
+  const slot = (key, cls = "") => `<div class="slot ${cls}" data-slot="${key}"></div>`;
+  const text = (key, cls, ph, tag = "div") => `<${tag} class="${cls}" data-text="${key}" data-ph="${ph}"></${tag}>`;
+
+  const TEMPLATES = {
+    cover: {
+      name: "Sampul", icon: "📖", desc: "Judul, nama berdua & satu foto",
+      defaults: { title: "The Book of Us", names: "Nama Kamu &amp; Nama Dia", mark: "est. 2024" },
+      html: () => text("title", "title", "Judul") + text("names", "subtitle", "Nama &amp; Nama") + slot("p1") + mark()
+    },
+    collage: {
+      name: "Kolase 4 foto", icon: "🖼", desc: "Empat foto + tanda tangan",
+      defaults: { sig: "Nama &amp; Nama", mark: "our little moments" },
+      html: () => `<div class="grid"><div class="col c1">${slot("p1")}${slot("p2")}</div><div class="col c2">${slot("p3")}${slot("p4")}</div></div>`
+        + text("sig", "script", "Nama &amp; Nama") + mark()
+    },
+    full: {
+      name: "Satu foto besar", icon: "🌅", desc: "Foto penuh + keterangan & tanggal",
+      defaults: { cap: "Pertemuan pertama", date: "14 · 02 · 2024" },
+      html: () => slot("p1") + text("cap", "script", "Keterangan") + text("date", "date", "tanggal")
+    },
+    duo: {
+      name: "Dua foto", icon: "👫", desc: "Dua foto berdampingan + cerita",
+      defaults: { head: "Kamu &amp; Aku", body: "Hari-hari biasa yang jadi luar biasa karena ada kamu." },
+      html: () => `<div class="row">${slot("p1")}${slot("p2")}</div>` + text("head", "subtitle", "Judul") + text("body", "body-text", "Cerita singkat…")
+    },
+    trio: {
+      name: "Tiga foto", icon: "🎞", desc: "Satu besar, dua kecil",
+      defaults: { cap: "Petualangan kita" },
+      html: () => slot("p1", "big") + `<div class="row">${slot("p2")}${slot("p3")}</div>` + text("cap", "script", "Keterangan")
+    },
+    polaroid: {
+      name: "Polaroid", icon: "📸", desc: "Foto ala polaroid miring",
+      defaults: { cap: "my favorite person", sub: "Tempat · Tahun" },
+      html: () => `<div class="pol"><div class="tape"></div>${slot("p1")}${text("cap", "script", "Keterangan")}</div>` + text("sub", "subtitle", "Tempat · Tahun")
+    },
+    letter: {
+      name: "Surat cinta", icon: "💌", desc: "Halaman tulisan + foto bulat kecil",
+      defaults: {
+        hi: "Untukmu,",
+        body: "Terima kasih sudah menjadi rumah paling nyaman untuk pulang. Setiap halaman di buku ini adalah potongan kecil dari cerita kita — dan aku tidak sabar menulis halaman-halaman berikutnya bersamamu.",
+        sign: "— dengan cinta"
+      },
+      html: () => `<div class="inner">${text("hi", "script", "Sapaan")}${text("body", "body-text", "Tulis suratmu di sini…")}${text("sign", "script sign", "Tanda tangan")}</div>` + slot("p1")
+    },
+    end: {
+      name: "Penutup", icon: "💗", desc: "Halaman akhir buku",
+      defaults: { end: "to be continued…", sub: "Bab berikutnya menanti kita" },
+      html: () => slot("p1") + text("end", "script", "Penutup") + text("sub", "subtitle", "Subjudul")
+    }
+  };
+
+  const DEFAULT_ORDER = ["cover", "collage", "full", "duo", "letter", "trio", "polaroid", "end"];
+  const uid = () => Math.random().toString(36).slice(2, 10);
+  const newPage = type => ({ id: uid(), type, texts: { ...TEMPLATES[type].defaults }, photos: {} });
+  const freshBook = () => ({ v: 1, pages: DEFAULT_ORDER.map(newPage) });
+
+  /* ================= Storage (IndexedDB, fallback to memory) ================= */
+  const DB_NAME = "book-of-us", STORE = "kv", KEY = "book";
+  function openDB() {
+    return new Promise((res, rej) => {
+      try {
+        const r = indexedDB.open(DB_NAME, 1);
+        r.onupgradeneeded = () => r.result.createObjectStore(STORE);
+        r.onsuccess = () => res(r.result);
+        r.onerror = () => rej(r.error);
+      } catch (e) { rej(e); }
+    });
+  }
+  async function load() {
+    try {
+      const db = await openDB();
+      return await new Promise(res => {
+        const g = db.transaction(STORE).objectStore(STORE).get(KEY);
+        g.onsuccess = () => res(g.result || null);
+        g.onerror = () => res(null);
+      });
+    } catch { return null; }
+  }
+  let saveTimer = null, storageOK = true;
+  function save() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try {
+        const db = await openDB();
+        db.transaction(STORE, "readwrite").objectStore(STORE).put(state, KEY);
+      } catch {
+        if (storageOK) { storageOK = false; toast("Browser ini tidak bisa menyimpan otomatis — pakai tombol Cadangan."); }
+      }
+    }, 300);
+  }
+
+  /* ================= State & render ================= */
+  let state = freshBook();
+  const book = document.getElementById("book");
+
+  function render() {
+    book.innerHTML = "";
+    state.pages.forEach((p, i) => book.appendChild(renderSheet(p, i)));
+  }
+
+  function renderSheet(p, i) {
+    const tpl = TEMPLATES[p.type] || TEMPLATES.full;
+    const sheet = document.createElement("section");
+    sheet.className = "sheet";
+    sheet.dataset.id = p.id;
+    const last = state.pages.length - 1;
+    sheet.innerHTML = `
+      <div class="sheet-bar">
+        <span class="num">HALAMAN ${i + 1} / ${state.pages.length} · ${tpl.name.toUpperCase()}</span>
+        <button class="icon-btn" data-act="up" title="Pindah ke atas" ${i === 0 ? "disabled" : ""}>↑</button>
+        <button class="icon-btn" data-act="down" title="Pindah ke bawah" ${i === last ? "disabled" : ""}>↓</button>
+        <button class="icon-btn" data-act="dup" title="Duplikat">⧉</button>
+        <button class="icon-btn" data-act="del" title="Hapus halaman">🗑</button>
+      </div>
+      <div class="page t-${p.type}">${tpl.html()}</div>`;
+
+    sheet.querySelectorAll("[data-text]").forEach(el => {
+      const k = el.dataset.text;
+      el.contentEditable = "true";
+      el.spellcheck = false;
+      el.innerHTML = p.texts[k] ?? "";
+      el.addEventListener("input", () => {
+        p.texts[k] = el.innerHTML === "<br>" ? "" : el.innerHTML;
+        save();
+      });
+      el.addEventListener("paste", e => { // keep text plain
+        const t = e.clipboardData && e.clipboardData.getData("text/plain");
+        if (t && !hasImage(e.clipboardData)) { e.preventDefault(); document.execCommand("insertText", false, t); }
+      });
+    });
+    sheet.querySelectorAll("[data-slot]").forEach(el => setupSlot(el, p));
+    return sheet;
+  }
+
+  function paintSlot(el, p) {
+    const ph = p.photos[el.dataset.slot];
+    el.classList.toggle("filled", !!ph);
+    if (ph) {
+      el.innerHTML = `<img alt="" src="${ph.src}" style="object-position:${ph.x}% ${ph.y}%">
+        <div class="tools"><button data-tool="replace" title="Ganti foto">⟳</button><button data-tool="remove" title="Hapus foto">✕</button></div>`;
+    } else {
+      el.innerHTML = `<div class="ph"><span>＋</span>Klik / tempel foto</div>`;
+    }
+  }
+
+  /* ================= Photo slots ================= */
+  let activeSlot = null; // {el, page}
+  function setActive(el, p) {
+    document.querySelectorAll(".slot.active").forEach(s => s.classList.remove("active"));
+    activeSlot = el ? { el, page: p } : null;
+    if (el) el.classList.add("active");
+  }
+
+  function setupSlot(el, p) {
+    paintSlot(el, p);
+    const key = el.dataset.slot;
+
+    el.addEventListener("click", e => {
+      setActive(el, p);
+      const tool = e.target.closest("[data-tool]");
+      if (tool) {
+        e.stopPropagation();
+        if (tool.dataset.tool === "remove") { delete p.photos[key]; paintSlot(el, p); save(); }
+        else pickFile(el, p);
+        return;
+      }
+      if (!p.photos[key]) pickFile(el, p);
+    });
+
+    // drag & drop files
+    el.addEventListener("dragover", e => { e.preventDefault(); el.classList.add("dragover"); });
+    el.addEventListener("dragleave", () => el.classList.remove("dragover"));
+    el.addEventListener("drop", e => {
+      e.preventDefault(); el.classList.remove("dragover");
+      const f = [...(e.dataTransfer.files || [])].find(f => f.type.startsWith("image/"));
+      if (f) putImage(f, el, p);
+    });
+
+    // pan to reposition (object-position)
+    let start = null;
+    el.addEventListener("pointerdown", e => {
+      if (!p.photos[key] || e.target.closest("[data-tool]")) return;
+      setActive(el, p);
+      const ph = p.photos[key];
+      start = { x: e.clientX, y: e.clientY, ox: ph.x, oy: ph.y, w: el.clientWidth, h: el.clientHeight };
+      el.setPointerCapture(e.pointerId);
+      el.classList.add("panning");
+    });
+    el.addEventListener("pointermove", e => {
+      if (!start) return;
+      const ph = p.photos[key];
+      ph.x = clamp(start.ox - (e.clientX - start.x) / start.w * 100, 0, 100);
+      ph.y = clamp(start.oy - (e.clientY - start.y) / start.h * 100, 0, 100);
+      const img = el.querySelector("img");
+      if (img) img.style.objectPosition = `${ph.x}% ${ph.y}%`;
+    });
+    const end = () => { if (start) { start = null; el.classList.remove("panning"); save(); } };
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
+  }
+
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const fileInput = document.getElementById("fileInput");
+  let pickTarget = null;
+  function pickFile(el, p) { pickTarget = { el, page: p }; fileInput.value = ""; fileInput.click(); }
+  fileInput.addEventListener("change", () => {
+    const f = fileInput.files[0];
+    if (f && pickTarget) putImage(f, pickTarget.el, pickTarget.page);
+  });
+
+  async function putImage(blob, el, p) {
+    try {
+      const src = await compress(blob);
+      p.photos[el.dataset.slot] = { src, x: 50, y: 50 };
+      paintSlot(el, p);
+      setActive(el, p);
+      save();
+    } catch {
+      toast("Gambar tidak bisa dibuka. Coba format JPG atau PNG.");
+    }
+  }
+
+  // Resize big photos so the book stays light in storage.
+  function compress(blob, max = 1800) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement("canvas");
+        c.width = Math.round(img.naturalWidth * s);
+        c.height = Math.round(img.naturalHeight * s);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        res(c.toDataURL("image/jpeg", .88));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(); };
+      img.src = url;
+    });
+  }
+
+  // Paste image from clipboard -> active slot, or first empty slot
+  const hasImage = dt => dt && [...dt.items].some(i => i.kind === "file" && i.type.startsWith("image/"));
+  document.addEventListener("paste", e => {
+    const item = e.clipboardData && [...e.clipboardData.items].find(i => i.kind === "file" && i.type.startsWith("image/"));
+    if (!item) return;
+    e.preventDefault();
+    let target = activeSlot && document.body.contains(activeSlot.el) ? activeSlot : null;
+    if (!target) {
+      for (const s of document.querySelectorAll("[data-slot]")) {
+        const page = state.pages.find(pg => pg.id === s.closest(".sheet").dataset.id);
+        if (!page.photos[s.dataset.slot]) { target = { el: s, page }; break; }
+      }
+    }
+    if (!target) { toast("Klik dulu kotak foto yang ingin diisi, lalu tempel lagi."); return; }
+    putImage(item.getAsFile(), target.el, target.page);
+    target.el.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  document.addEventListener("click", e => { if (!e.target.closest(".slot")) setActive(null); });
+
+  /* ================= Page actions ================= */
+  book.addEventListener("click", e => {
+    const b = e.target.closest("[data-act]");
+    if (!b) return;
+    const id = b.closest(".sheet").dataset.id;
+    const i = state.pages.findIndex(p => p.id === id);
+    const act = b.dataset.act;
+    if (act === "up" && i > 0) [state.pages[i - 1], state.pages[i]] = [state.pages[i], state.pages[i - 1]];
+    else if (act === "down" && i < state.pages.length - 1) [state.pages[i + 1], state.pages[i]] = [state.pages[i], state.pages[i + 1]];
+    else if (act === "dup") state.pages.splice(i + 1, 0, { ...JSON.parse(JSON.stringify(state.pages[i])), id: uid() });
+    else if (act === "del") {
+      if (state.pages.length <= 1) { toast("Buku minimal punya satu halaman."); return; }
+      if (!confirm("Hapus halaman ini beserta fotonya?")) return;
+      state.pages.splice(i, 1);
+    }
+    render(); save();
+  });
+
+  // Template picker
+  const modal = document.getElementById("tplModal");
+  const tplGrid = document.getElementById("tplGrid");
+  tplGrid.innerHTML = Object.entries(TEMPLATES).map(([k, t]) =>
+    `<button class="tpl" data-tpl="${k}"><div class="mini">${t.icon}</div><b>${t.name}</b><span>${t.desc}</span></button>`).join("");
+  document.getElementById("btnAdd").onclick = () => modal.classList.add("open");
+  document.getElementById("tplClose").onclick = () => modal.classList.remove("open");
+  modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("open"); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") modal.classList.remove("open"); });
+  tplGrid.addEventListener("click", e => {
+    const b = e.target.closest("[data-tpl]");
+    if (!b) return;
+    const pg = newPage(b.dataset.tpl);
+    const lastIsEnd = state.pages.length && state.pages[state.pages.length - 1].type === "end";
+    state.pages.splice(lastIsEnd ? state.pages.length - 1 : state.pages.length, 0, pg);
+    modal.classList.remove("open");
+    render(); save();
+    const el = book.querySelector(`[data-id="${pg.id}"]`);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+
+  /* ================= Toolbar ================= */
+  document.getElementById("btnPrint").onclick = () => window.print();
+
+  document.getElementById("btnReset").onclick = () => {
+    if (!confirm("Kembalikan ke template awal? Semua foto & tulisan akan dihapus.")) return;
+    state = freshBook(); render(); save(); toast("Template dikembalikan ke awal.");
+  };
+
+  document.getElementById("btnBackup").onclick = () => {
+    const blob = new Blob([JSON.stringify(state)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "book-of-us.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast("Cadangan diunduh. Simpan file ini baik-baik ♥");
+  };
+
+  const restoreInput = document.getElementById("restoreInput");
+  document.getElementById("btnRestore").onclick = () => { restoreInput.value = ""; restoreInput.click(); };
+  restoreInput.addEventListener("change", async () => {
+    const f = restoreInput.files[0];
+    if (!f) return;
+    try {
+      const data = JSON.parse(await f.text());
+      if (!Array.isArray(data.pages)) throw 0;
+      data.pages = data.pages.filter(p => TEMPLATES[p.type]).map(p => ({ id: p.id || uid(), type: p.type, texts: p.texts || {}, photos: p.photos || {} }));
+      state = { v: 1, pages: data.pages.length ? data.pages : freshBook().pages };
+      render(); save(); toast("Cadangan berhasil dibuka.");
+    } catch { toast("File cadangan tidak valid."); }
+  });
+
+  let toastTimer;
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
+  }
+
+  /* ================= Boot ================= */
+  render();
+  load().then(saved => {
+    if (saved && Array.isArray(saved.pages) && saved.pages.length) { state = saved; render(); }
+  });
+})();
+</script>
+</body>
+</html>
