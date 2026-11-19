@@ -427,6 +427,24 @@
     flex: 1 1 200px; min-width: 0; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line);
     font: 600 13px var(--ui); color: var(--ink); background: var(--sky-2);
   }
+  .print-opts { display: grid; gap: 12px; }
+  .print-opt {
+    text-align: left; border: 1px solid var(--line); border-radius: 14px; background: var(--sky-2);
+    padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; transition: transform .2s, border-color .2s;
+  }
+  .print-opt:hover { border-color: var(--blue); background: #fff; transform: rotate(-1deg) translateY(-2px); }
+  .print-opt:disabled { opacity: .5; pointer-events: none; }
+  .print-opt b { font-size: 15px; color: var(--ink); }
+  .print-opt span { font-size: 13px; line-height: 1.45; color: var(--ink-soft); }
+  .print-status { min-height: 1.4em; margin: 14px 0 0 !important; font-weight: 700; color: var(--blue-deep) !important; }
+  /* off-screen copy of each page, drawn into the PDF */
+  .print-stage { position: fixed; left: -10000px; top: 0; width: 560px; pointer-events: none; }
+  .print-stage *, .print-stage *::before, .print-stage *::after { animation: none !important; transition: none !important; }
+  .print-stage .page { width: 560px; transform: none !important; box-shadow: none; border-radius: 0; background: var(--paper); }
+  .print-stage .frame::before, .print-stage .frame::after { background: rgba(108, 160, 228, .5) !important; }
+  .print-stage .t-letter .lines { background: none; }
+  .print-stage .t-letter .lines i { position: absolute; left: 0; right: 0; height: 1px; background: var(--paper-line); }
+  .print-stage .t-letter .lines b { position: absolute; top: 0; bottom: 0; left: 10.5cqw; width: 1px; background: rgba(47, 111, 208, .35); }
   @keyframes liftAway { to { opacity: 0; transform: translateY(-40px) scale(1.04); } }
 `;
   const MARKUP = String.raw`
@@ -444,12 +462,12 @@
     <h1>The Book of <em>Us</em></h1>
   </div>
   <div class="actions">
-    <button class="btn local-only" id="btnBackup" title="Unduh cadangan (.json)">Cadangan</button>
+    <button class="btn" id="btnBackup" title="Unduh cadangan (.json)">Cadangan</button>
     <button class="btn" id="btnRestore" title="Buka cadangan (.json)">Buka</button>
     <button class="btn" id="btnReset" title="Kembalikan ke template awal">Reset</button>
     <button class="btn" id="btnPreview" title="Lihat buku seperti yang dilihat pasanganmu">Lihat hasil</button>
     <button class="btn primary" id="btnShare" hidden>Bagikan ♡</button>
-    <button class="btn primary local-only" id="btnPrint">Simpan PDF</button>
+    <button class="btn" id="btnPrintBook" title="Buat PDF siap cetak">Cetak buku</button>
   </div>
 </header>
 
@@ -481,6 +499,24 @@
     <p>Kirim link ini ke pasanganmu. Dia akan melihat buku kalian yang sudah jadi, tanpa tombol edit.</p>
     <div class="share-row"><input id="shareLink" readonly aria-label="Link buku"><button class="btn primary" id="btnCopy">Salin</button></div>
     <div class="modal-foot"><button class="btn" id="shareClose">Tutup</button></div>
+  </div>
+</div>
+
+<div class="modal" id="printModal" role="dialog" aria-modal="true" aria-labelledby="printTitle">
+  <div class="modal-box">
+    <h2 id="printTitle">Cetak buku scrapbook</h2>
+    <div class="print-opts">
+      <button class="print-opt" data-print="pages">
+        <b>Untuk percetakan</b>
+        <span>PDF ukuran A5 (14,8 × 21 cm), satu halaman per lembar. Bawa ke percetakan atau jasa cetak photobook untuk dijilid.</span>
+      </button>
+      <button class="print-opt" data-print="booklet">
+        <b>Cetak sendiri, jadi buku lipat</b>
+        <span>PDF kertas A4 yang sudah diurutkan. Cetak bolak-balik (balik di sisi pendek), tumpuk, lipat dua di tengah, lalu staples di lipatannya.</span>
+      </button>
+    </div>
+    <p class="print-status" id="printStatus" aria-live="polite"></p>
+    <div class="modal-foot"><button class="btn" id="printClose">Tutup</button></div>
   </div>
 </div>
 
@@ -867,7 +903,7 @@
   document.getElementById("btnAdd").onclick = () => modal.classList.add("open");
   document.getElementById("tplClose").onclick = () => modal.classList.remove("open");
   modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("open"); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") { modal.classList.remove("open"); shareModal.classList.remove("open"); cModal.classList.contains("open") && document.getElementById("confirmNo").click(); } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { modal.classList.remove("open"); shareModal.classList.remove("open"); printModal.classList.remove("open"); cModal.classList.contains("open") && document.getElementById("confirmNo").click(); } });
   tplGrid.addEventListener("click", e => {
     const b = e.target.closest("[data-tpl]");
     if (!b) return;
@@ -933,7 +969,6 @@
   /* ================= Toolbar ================= */
   try { if (window.self !== window.top) document.documentElement.classList.add("framed"); }
   catch { document.documentElement.classList.add("framed"); }
-  document.getElementById("btnPrint").onclick = () => window.print();
 
   document.getElementById("btnReset").onclick = () => {
     askConfirm("Kembalikan ke template awal?", "Semua foto & tulisan akan dihapus.", "Reset").then(ok => {
@@ -942,15 +977,159 @@
     });
   };
 
-  document.getElementById("btnBackup").onclick = () => {
+  document.getElementById("btnBackup").onclick = async () => {
     const blob = new Blob([JSON.stringify(state)], { type: "application/json" });
+    if (await saveFile(blob, "book-of-us.json")) toast("Cadangan disimpan. Simpan file ini baik-baik ♥");
+  };
+
+  // Hand a generated file to the viewer: through the viewer's save prompt when there is one, else a plain download.
+  async function saveFile(blob, filename) {
+    const dl = await use("downloads");
+    if (dl) {
+      try { await dl.save({ filename, data: blob }); return true; }
+      catch (e) {
+        if (e && e.code === "declined") return false;
+        if (e && e.code === "rate_limited") { toast("Tunggu sebentar, lalu coba lagi."); return false; }
+        toast("File belum bisa disimpan di sini.");
+        return false;
+      }
+    }
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "book-of-us.json";
+    a.download = filename;
     document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-    toast("Cadangan diunduh. Simpan file ini baik-baik ♥");
-  };
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    return true;
+  }
+
+  /* ================= Print a physical scrapbook ================= */
+  const loadScript = src => new Promise((res, rej) => {
+    if ([...document.scripts].some(sc => sc.src === src)) return res();
+    const sc = document.createElement("script");
+    sc.src = src; sc.onload = () => res(); sc.onerror = () => rej(new Error("script"));
+    document.head.appendChild(sc);
+  });
+
+  // A clean, still copy of one page: no editing bits, empty photo spots hidden.
+  function buildStaticPage(p) {
+    const tpl = TEMPLATES[p.type] || TEMPLATES.full;
+    const page = document.createElement("div");
+    page.className = `page t-${p.type}`;
+    page.innerHTML = tpl.html();
+    page.querySelectorAll("[data-text]").forEach(el => { el.innerHTML = cleanHTML(p.texts[el.dataset.text] ?? ""); });
+    page.querySelectorAll("[data-slot]").forEach(el => {
+      const ph = p.photos[el.dataset.slot];
+      const frame = el.closest(".frame");
+      if (!ph) { if (frame) frame.style.visibility = "hidden"; return; }
+      el.classList.add("filled");
+      const d = document.createElement("div");
+      d.style.cssText = `position:absolute;inset:0;background-image:url("${ph.src}");background-size:cover;background-repeat:no-repeat;background-position:${ph.x}% ${ph.y}%`;
+      el.appendChild(d);
+    });
+    page.querySelectorAll("svg").forEach(sv => { sv.style.color = "#2f6fd0"; });
+    return page;
+  }
+
+  // The canvas renderer misses a few effects the page uses, so spell them out plainly.
+  function prepareForCanvas(pg) {
+    const ink = getComputedStyle(document.documentElement).getPropertyValue("--blue").trim() || "#2f6fd0";
+    pg.querySelectorAll("svg").forEach(sv => {
+      const r = sv.getBoundingClientRect();
+      sv.setAttribute("width", Math.round(r.width));
+      sv.setAttribute("height", Math.round(r.height));
+      sv.style.width = Math.round(r.width) + "px";
+      sv.style.height = Math.round(r.height) + "px";
+      ["fill", "stroke"].forEach(a => { if (sv.getAttribute(a) === "currentColor") sv.setAttribute(a, ink); });
+      if (sv.classList.contains("doodle")) { // floating doodles: swap in a plain image of the same drawing
+        sv.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        const img = new Image();
+        img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(sv.outerHTML);
+        img.style.cssText = sv.style.cssText;
+        img.style.position = "absolute"; img.style.zIndex = "1";
+        sv.replaceWith(img);
+      }
+    });
+    const lines = pg.querySelector(".t-letter .lines, .lines");
+    if (lines) {
+      const w = pg.getBoundingClientRect().width, step = w * .078, h = pg.getBoundingClientRect().height;
+      let html = "<b></b>";
+      for (let y = w * .016 + step - 1; y < h; y += step) html += `<i style="top:${y.toFixed(1)}px"></i>`;
+      lines.innerHTML = html;
+    }
+  }
+
+  async function renderPages(pages, onStep) {
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");
+    try { await document.fonts.ready; } catch {}
+    const stage = document.createElement("div");
+    stage.className = "print-stage";
+    document.body.appendChild(stage);
+    const out = [];
+    try {
+      for (let i = 0; i < pages.length; i++) {
+        onStep(i + 1, pages.length);
+        stage.innerHTML = "";
+        const pg = buildStaticPage(pages[i]);
+        stage.appendChild(pg);
+        prepareForCanvas(pg);
+        const canvas = await window.html2canvas(pg, { scale: 2.5, backgroundColor: "#fffefb", useCORS: true, logging: false });
+        out.push(canvas.toDataURL("image/jpeg", .92));
+      }
+    } finally { stage.remove(); }
+    return out;
+  }
+
+  // Booklet order for A4 sheets printed double-sided and folded in half.
+  function bookletSpreads(imgs) {
+    const list = imgs.slice();
+    while (list.length % 4) list.splice(list.length - 1, 0, null); // blank pages go just before the back cover
+    const n = list.length, spreads = [];
+    for (let s = 0; s < n / 4; s++) {
+      spreads.push([list[n - 1 - 2 * s], list[2 * s]]);       // front of sheet
+      spreads.push([list[2 * s + 1], list[n - 2 - 2 * s]]);   // back of sheet
+    }
+    return spreads;
+  }
+
+  const printModal = document.getElementById("printModal");
+  const printStatus = document.getElementById("printStatus");
+  document.getElementById("btnPrintBook").onclick = () => { printStatus.textContent = ""; printModal.classList.add("open"); };
+  document.getElementById("printClose").onclick = () => printModal.classList.remove("open");
+  printModal.addEventListener("click", async e => {
+    if (e.target === printModal) { printModal.classList.remove("open"); return; }
+    const opt = e.target.closest("[data-print]");
+    if (!opt) return;
+    const kind = opt.dataset.print;
+    const opts = [...printModal.querySelectorAll(".print-opt")];
+    opts.forEach(o => { o.disabled = true; });
+    try {
+      const imgs = await renderPages(shown().pages, (i, n) => { printStatus.textContent = `Menyusun halaman ${i} dari ${n}…`; });
+      printStatus.textContent = "Membuat PDF…";
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+      const { jsPDF } = window.jspdf;
+      let doc, filename;
+      if (kind === "booklet") {
+        doc = new jsPDF({ unit: "mm", format: "a4", orientation: "landscape" });
+        bookletSpreads(imgs).forEach((pair, i) => {
+          if (i) doc.addPage("a4", "landscape");
+          pair.forEach((img, side) => { if (img) doc.addImage(img, "JPEG", side * 148.5, 0, 148.5, 210); });
+          doc.setDrawColor(220, 230, 242); doc.setLineDash([1.5, 2]); doc.line(148.5, 0, 148.5, 4); doc.line(148.5, 206, 148.5, 210);
+        });
+        filename = "the-book-of-us-buku-lipat-a4.pdf";
+      } else {
+        doc = new jsPDF({ unit: "mm", format: [148, 210], orientation: "portrait" });
+        imgs.forEach((img, i) => { if (i) doc.addPage([148, 210], "portrait"); doc.addImage(img, "JPEG", 0, 0, 148, 210); });
+        filename = "the-book-of-us-a5.pdf";
+      }
+      printStatus.textContent = "Menyimpan…";
+      const ok = await saveFile(doc.output("blob"), filename);
+      printStatus.textContent = ok ? "PDF siap dicetak ♡" : "";
+    } catch {
+      printStatus.textContent = "PDF belum berhasil dibuat. Periksa koneksi internet, lalu coba lagi.";
+    } finally {
+      opts.forEach(o => { o.disabled = false; });
+    }
+  });
 
   const restoreInput = document.getElementById("restoreInput");
   document.getElementById("btnRestore").onclick = () => { restoreInput.value = ""; restoreInput.click(); };
