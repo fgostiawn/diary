@@ -72,29 +72,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .btn:focus-visible,.ck:focus-visible,.ph:focus-visible{outline:2px solid var(--butter);outline-offset:2px}
 .status{font:500 12px var(--f-sans);color:rgba(244,236,221,.6);min-width:70px}
 
-.helpbar{
-  display:none;justify-content:center;text-align:center;
-  font:500 12.5px/1.5 var(--f-sans);color:#1a2a45;background:var(--butter);
-  padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-}
-body.editing .helpbar{display:flex}
-.note{
-  display:none;justify-content:center;text-align:center;font:500 12.5px/1.5 var(--f-sans);
-  color:var(--cream);background:rgba(107,26,23,.9);
-  padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-}
-body.framed .note{display:flex}
 body.framed [data-top-only]{display:none}
 
-/* ---------- intro ---------- */
-.intro{
-  display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;
-  padding-block:44px 8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
-}
-.intro h1{margin:0;font:400 clamp(48px,9vw,84px)/1 var(--f-script);color:var(--butter);text-wrap:balance}
-.intro .tag{font:500 clamp(18px,3vw,26px)/1 var(--f-display);color:#1f2f52;background:var(--butter);padding:6px 16px}
-.intro ul{list-style:none;margin:10px 0 0;padding:0;font:500 clamp(16px,2.4vw,21px)/1.55 var(--f-display);color:var(--butter)}
-.intro li::before{content:"\2713\00a0 "}
 
 /* ---------- book & sheets ---------- */
 .book{
@@ -343,7 +322,7 @@ body.editing [e]:focus{outline:1.5px solid #4a8be0}
 @media print{
   html,body{background:#fff!important}
   body::before{display:none}
-  .bar,.intro,.helpbar,.note,.sheet-label,.toast,.edit-only,.ph-empty{display:none!important}
+  .bar,.sheet-label,.toast,.edit-only,.ph-empty{display:none!important}
   .book{display:block;padding:0}
   .sheet-wrap{display:block}
   .sheet{box-shadow:none;margin:0;overflow:hidden;break-after:page;page-break-after:always;max-width:none}
@@ -373,18 +352,7 @@ body.editing [e]:focus{outline:1.5px solid #4a8be0}
     <span class="status" id="status" aria-live="polite"></span>
   </div>
 </header>
-<div class="helpbar">Klik tulisan untuk mengubahnya. Klik bingkai foto untuk memilih foto; geser foto untuk mengatur posisinya. Semua tersimpan otomatis di browser ini.</div>
-<div class="note">Cetak dan unduh file tidak tersedia di pratinjau ini. Buka file <b>&nbsp;scrapbook/index.html&nbsp;</b> langsung di Chrome atau Safari untuk mencetak A4 dan membagikan.</div>
 
-<section class="intro">
-  <h1>Zine Kita</h1>
-  <div class="tag">20 halaman · siap cetak A4</div>
-  <ul>
-    <li>isi foto &amp; tulisan langsung di halaman</li>
-    <li>cetak A4 lanskap atau potret</li>
-    <li>bagikan sebagai satu file HTML atau PDF</li>
-  </ul>
-</section>
 
 <main class="book" id="book" lang="id">
 
@@ -731,7 +699,7 @@ Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pe
       rm.type = "button"; rm.className = "ph-rm edit-only"; rm.setAttribute("aria-label", "Hapus foto"); rm.textContent = "×";
       ph.append(img, rm);
     } else {
-      ph.insertAdjacentHTML("beforeend", '<span class="ph-empty">' + CAM + '<span class="edit-only">Tambah foto</span></span>');
+      ph.insertAdjacentHTML("beforeend", '<span class="ph-empty">' + CAM + '</span>');
     }
   }
   function renderAll() {
@@ -881,8 +849,7 @@ Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pe
   $("#t-edit").addEventListener("click", () => { setEdit(!state.edit); save(); });
   $("#b-print").addEventListener("click", () => {
     if (document.activeElement) document.activeElement.blur();
-    toast("Pilih ukuran kertas A4, margin: tidak ada, dan aktifkan grafis latar.");
-    setTimeout(() => window.print(), 350);
+    setTimeout(() => window.print(), 50);
   });
   const resetBtn = $("#b-reset");
   let resetArmed = null;
@@ -920,7 +887,7 @@ Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pe
       }
     } catch (e) { if (e && e.name === "AbortError") return; }
     download(blob, name);
-    toast("File zine-kita.html terunduh. Kirim file ini, penerima cukup membukanya di browser.");
+    toast("File zine-kita.html terunduh.");
   });
 
   /* ---------- decorations ---------- */
