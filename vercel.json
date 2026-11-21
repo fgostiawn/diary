@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "echo \"Zine Kita: situs statis di folder scrapbook\"",
+  "outputDirectory": "scrapbook"
+}
