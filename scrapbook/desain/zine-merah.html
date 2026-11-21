@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="id" data-design="zine-merah" data-mode="land">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zine Merah</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Zine anniversary 20 halaman bernuansa merah marun dan cokelat, siap cetak A4.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@400;500;600;700&family=Pinyon+Script&family=Allura&family=Archivo+Black&family=Bebas+Neue&family=Courier+Prime&family=Lora:ital,wght@0,400;0,500;1,400&display=swap">
+<style id="page-size">@page{size:A4 landscape;margin:0}</style>
+<style>
+:root{
+  --desk:#1c2f4d; --desk-dot:rgba(255,255,255,.8);
+  --wine:#6b1a17; --wine-deep:#4d1110; --cocoa:#4b2f20;
+  --cream:#f4ecdd; --paper:#fbf8f2; --ink:#2b1f19; --butter:#fbf3b5;
+  --steel:#5d78a5; --chat:#2f6c9f; --navy:#22305a;
+  --f-script:"Pinyon Script","Great Vibes",cursive;
+  --f-hand:"Allura","Pinyon Script",cursive;
+  --f-display:"Cormorant Garamond",Georgia,serif;
+  --f-body:"Lora",Georgia,"Times New Roman",serif;
+  --f-cond:"Bebas Neue","Oswald",Impact,sans-serif;
+  --f-black:"Archivo Black","Arial Black",sans-serif;
+  --f-mono:"Courier Prime","Courier New",monospace;
+  --f-sans:"Montserrat","Helvetica Neue",Arial,sans-serif;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E");
+  --heart:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 90'%3E%3Cpath d='M50 88C20 66 0 48 0 26 0 10 12 0 26 0c11 0 19 6 24 15C55 6 63 0 74 0c14 0 26 10 26 26 0 22-20 40-50 62z'/%3E%3C/svg%3E");
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{
+  margin:0;min-height:100vh;color:var(--cream);font-family:var(--f-body);
+  background:
+    radial-gradient(circle,var(--desk-dot) 0 1.4px,transparent 2.1px) 0 0/92px 92px,
+    radial-gradient(circle,var(--desk-dot) 0 1.4px,transparent 2.1px) 46px 46px/92px 92px,
+    var(--grain),
+    var(--desk);
+  background-blend-mode:normal,normal,overlay,normal;
+}
+button{font:inherit}
+
+/* ---------- toolbar ---------- */
+.bar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:30;
+  display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;
+  padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  background:rgba(16,28,49,.9);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(251,243,181,.14);
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:31;background:#101c31}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+.back{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin-right:2px;border-radius:50%;border:1px solid rgba(251,243,181,.38);color:var(--butter);text-decoration:none;font:600 16px/1 var(--f-sans);align-self:center}
+.back:hover{background:rgba(251,243,181,.1)}
+.back:focus-visible{outline:2px solid var(--butter);outline-offset:2px}
+body.shared .back{display:none}
+.brand b{font:400 30px/1 var(--f-script);color:var(--butter);white-space:nowrap}
+.brand span{font:italic 15px var(--f-display);color:rgba(244,236,221,.7)}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg{display:inline-flex;border:1px solid rgba(251,243,181,.38);border-radius:999px;overflow:hidden}
+.btn{
+  font:600 12.5px/1 var(--f-sans);letter-spacing:.02em;color:var(--cream);
+  background:transparent;border:1px solid rgba(251,243,181,.38);border-radius:999px;
+  padding:9px 14px;cursor:pointer;white-space:nowrap;
+}
+.btn:hover{background:rgba(251,243,181,.1)}
+.seg .btn{border:0;border-radius:0}
+.btn[aria-pressed="true"]{background:var(--butter);color:#1a2a45}
+.btn.primary{background:var(--butter);border-color:var(--butter);color:#1a2a45}
+.btn.primary:hover{background:#fff7c8}
+.btn.warn{color:#ffd2c8;border-color:rgba(255,190,170,.4)}
+.btn:focus-visible,.ck:focus-visible,.ph:focus-visible{outline:2px solid var(--butter);outline-offset:2px}
+.status{font:500 12px var(--f-sans);color:rgba(244,236,221,.6);min-width:70px}
+
+body.framed [data-top-only]{display:none}
+
+
+/* ---------- book & sheets ---------- */
+.book{
+  display:flex;flex-direction:column;align-items:center;gap:56px;
+  padding-block:28px 96px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.sheet-wrap{width:100%;display:flex;flex-direction:column;align-items:center;gap:12px}
+.sheet-label{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;justify-content:center}
+.lab-n{font:italic 500 23px var(--f-display);color:var(--butter)}
+.lab-t{font:600 10.5px var(--f-sans);letter-spacing:.16em;text-transform:uppercase;color:rgba(244,236,221,.55)}
+.sheet{position:relative;display:grid;max-width:100%;background:#fff;box-shadow:0 20px 44px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.3)}
+.sheet.land{grid-template-columns:1fr 1fr;width:min(1100px,100%)}
+.sheet.port{grid-template-columns:1fr;width:min(600px,100%)}
+.sheet.land::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:5%;transform:translateX(-50%);background:linear-gradient(90deg,transparent,rgba(0,0,0,.16) 50%,transparent);pointer-events:none;z-index:5}
+
+/* ---------- page base (all inner sizes in cqw: 100cqw = lebar halaman, tinggi = 141.42cqw) ---------- */
+.page{position:relative;width:100%;aspect-ratio:1/1.41421;container-type:inline-size;overflow:hidden;color:var(--ink);font-family:var(--f-body)}
+.page h2,.page h3,.page p{margin:0;font-weight:inherit}
+[e]{white-space:pre-line}
+.script{font-family:var(--f-script);font-weight:400}
+.hand{font-family:var(--f-hand)}
+.abs{position:absolute}
+
+/* photo slots */
+.ph{position:relative;overflow:hidden;background:linear-gradient(135deg,#ddd2c4,#b9ab9b)}
+.ph.bw{background:linear-gradient(135deg,#d6d6d6,#9b9b9b)}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;user-select:none;-webkit-user-select:none;-webkit-user-drag:none}
+.ph.bw img{filter:grayscale(1) contrast(1.06)}
+.ph-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8cqw;color:rgba(55,38,28,.5);font:600 1.5cqw/1.1 var(--f-sans);letter-spacing:.1em;text-transform:uppercase;text-align:center;pointer-events:none}
+.ph-empty svg{width:28%;max-width:7cqw;min-width:14px;height:auto;opacity:.65}
+.ph-rm{position:absolute;top:5px;right:5px;z-index:4;width:26px;height:26px;border-radius:50%;border:0;padding:0;background:rgba(0,0,0,.62);color:#fff;font:700 17px/26px var(--f-sans);cursor:pointer}
+body:not(.editing) .edit-only{display:none!important}
+body.editing .ph{cursor:pointer}
+body.editing .ph.has{cursor:grab}
+.ph.grabbing{cursor:grabbing!important}
+.ph.panning{touch-action:none;cursor:move;box-shadow:inset 0 0 0 3px #f2c94c!important}
+.ph.drop{box-shadow:inset 0 0 0 3px #4a8be0!important}
+.ph.loading::after{content:"";position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:3px solid rgba(255,255,255,.5);border-top-color:#7c1d1a;animation:spin .8s linear infinite;z-index:5}
+@keyframes spin{to{transform:rotate(360deg)}}
+.menu{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(8,14,26,.55);padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.menu[hidden]{display:none}
+@media (min-width:700px){.menu{align-items:center}}
+.menu-card{width:min(420px,100%);display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:18px;background:#fbf7ef;color:#2b1f19;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.menu-title{font:400 32px/1 var(--f-script);color:#7c1d1a;text-align:center;padding:4px 0 8px}
+.mbtn{font:600 15px/1.2 var(--f-sans);padding:15px;border-radius:12px;border:1px solid #e4d9c9;background:#fff;color:#2b1f19;cursor:pointer}
+.mbtn:hover{background:#f6efe3}
+.mbtn:focus-visible{outline:2px solid #7c1d1a;outline-offset:2px}
+.mbtn.danger{color:#a3271f}
+.mbtn.ghost{background:transparent;border-color:transparent}
+.mbtn[hidden]{display:none}
+.pan-done{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:45;padding:13px 22px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.pan-done[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.ph.loading::after{animation-duration:2s}}
+body.editing .ph:hover{box-shadow:inset 0 0 0 2px rgba(80,140,230,.85)}
+body.editing [e]{outline:1px dashed transparent;outline-offset:2px;border-radius:2px;cursor:text}
+body.editing [e]:hover{outline-color:rgba(80,140,230,.7)}
+body.editing [e]:focus{outline:1.5px solid #4a8be0}
+
+.pol{position:absolute;background:#fdfcf8;padding:1.6cqw 1.6cqw 0;box-shadow:0 .7cqw 1.8cqw rgba(0,0,0,.3)}
+.pol .ph{width:100%;aspect-ratio:var(--ar,1)}
+.pol .cap{font:3.6cqw/1.1 var(--f-hand);color:var(--ink);text-align:center;padding:1.1cqw 0 1.5cqw;min-height:5.6cqw}
+.tape{position:absolute;z-index:3;width:12cqw;height:3.4cqw;background:rgba(238,226,170,.78);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.ck{cursor:pointer;padding:0;background:transparent;color:inherit}
+
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;transition:.25s;z-index:40;background:var(--butter);color:#1a2a45;font:600 13px var(--f-sans);padding:10px 16px;border-radius:999px;box-shadow:0 6px 20px rgba(0,0,0,.35);pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:560px){
+  .brand span{display:none}
+  .book{gap:40px}
+}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+
+@media print{
+  html,body{background:#fff!important}
+  body::before{display:none}
+  .bar,.sheet-label,.toast,.edit-only,.ph-empty,.menu,.pan-done{display:none!important}
+  .book{display:block;padding:0}
+  .sheet-wrap{display:block}
+  .sheet{box-shadow:none;margin:0;overflow:hidden;break-after:page;page-break-after:always;max-width:none}
+  .sheet-wrap:last-child .sheet{break-after:auto;page-break-after:auto}
+  .sheet.land{width:297mm;height:209.6mm}
+  .sheet.port{width:210mm;height:296.6mm}
+  .sheet::after{display:none}
+  body.editing .ph:hover,body.editing [e]{outline:none!important;box-shadow:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+/* ===== desain: Zine Merah ===== */
+/* 1 · pembuka */
+.pg-end{background:var(--grain),radial-gradient(120% 90% at 50% 40%,#611715,var(--wine-deep));background-blend-mode:overlay,normal;color:var(--cream)}
+.pg-end .frame{position:absolute;inset:6cqw;border:1px solid rgba(244,236,221,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4cqw;padding:8cqw}
+.eyebrow{font:600 1.7cqw/1 var(--f-sans);letter-spacing:.32em;text-transform:uppercase;opacity:.8}
+.end-title{font:400 14cqw/1 var(--f-script)}
+.end-text{font:italic 400 3cqw/1.6 var(--f-display);max-width:60cqw}
+.end-sign{font:italic 500 2.8cqw var(--f-display);display:flex;gap:2.4cqw;align-items:center}
+.end-sign i{font-style:normal;color:#d8746a}
+.end-stamp{position:absolute;left:0;right:0;bottom:10cqw;text-align:center;font:1.6cqw var(--f-mono);letter-spacing:.3em;text-transform:uppercase;opacity:.7}
+
+/* 2 · sampul */
+.pg-cover{background:var(--grain),linear-gradient(160deg,#7a201c,#5c1513 60%,#4e1110);background-blend-mode:overlay,normal}
+.spine{position:absolute;top:0;bottom:0;left:0;width:4.6cqw;background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(0,0,0,.12) 70%,rgba(255,255,255,.05));box-shadow:1px 0 0 rgba(0,0,0,.25)}
+.spine.r{left:auto;right:0;transform:scaleX(-1)}
+.cover-title{position:absolute;left:20cqw;top:41cqw;z-index:2;font:400 9cqw/1 var(--f-hand);color:#f6efe4;transform:rotate(-5deg);text-shadow:0 1px 6px rgba(0,0,0,.35)}
+.cover-photo{position:absolute;left:31cqw;top:52cqw;width:38cqw;aspect-ratio:1;border:.7cqw solid #f3eee6;box-shadow:0 .6cqw 1.6cqw rgba(0,0,0,.35)}
+.cover-date{position:absolute;left:31cqw;top:93cqw;font:1.9cqw var(--f-mono);letter-spacing:.14em;color:#f3eee6}
+
+/* 3–4 · tentang kita */
+.paper{background:var(--grain),linear-gradient(115deg,rgba(255,255,255,.7),rgba(0,0,0,.035) 38%,rgba(255,255,255,.55) 56%,rgba(0,0,0,.05) 80%,rgba(255,255,255,.4)),#f5f2ec;background-blend-mode:soft-light,normal,normal}
+.about-block{position:absolute;inset:8cqw;background:var(--grain),#6c1712;background-blend-mode:overlay,normal;color:#f6ece3;padding:7cqw 6.5cqw;box-shadow:0 .5cqw 1.4cqw rgba(0,0,0,.18)}
+.about-block h2{font:400 10.5cqw/.9 var(--f-cond);letter-spacing:.01em;margin-bottom:4.5cqw}
+.about-text{font:2.42cqw/1.58 var(--f-body);text-align:justify;hyphens:auto}
+.about-text::first-letter{font:400 9.5cqw/.7 var(--f-script);float:left;margin:1.6cqw 1.4cqw 0 0}
+.about-photo{position:absolute;left:10cqw;top:14cqw;width:80cqw;aspect-ratio:4/5;box-shadow:0 .8cqw 2cqw rgba(0,0,0,.22)}
+.heart-wrap{position:absolute;right:5cqw;top:98cqw;width:22cqw;aspect-ratio:10/9;transform:rotate(14deg);filter:drop-shadow(0 .7cqw .8cqw rgba(0,0,0,.3));z-index:3}
+.paper-heart{width:100%;height:100%;background:radial-gradient(circle at 32% 28%,#cf4a43,#9b211d 55%,#6e1512);-webkit-mask:var(--heart) center/contain no-repeat;mask:var(--heart) center/contain no-repeat}
+.about-cap{position:absolute;left:11cqw;top:119cqw;width:60cqw;font:5.4cqw/1.1 var(--f-hand);color:#5a2a22}
+
+/* 5 · tanggal */
+.pg-start{background:radial-gradient(circle,rgba(255,238,215,.2) 0 .6px,transparent 1.1px) 0 0/13px 17px,var(--grain),#4d2f1f;background-blend-mode:normal,overlay,normal;color:#efe5d3}
+.big-n{position:absolute;font:38cqw/.8 var(--f-black);color:#efe5d3;letter-spacing:-.03em}
+.n1{left:5cqw;top:7cqw}
+.n2{right:5cqw;bottom:5cqw}
+.start-title{position:absolute;left:60cqw;top:9cqw;width:37cqw}
+.start-title .a{font:400 6cqw/1 var(--f-display)}
+.start-title .script{display:block;font-size:7.6cqw;line-height:1.1;margin-left:2cqw}
+.start-text{position:absolute;left:7cqw;top:46cqw;width:60cqw;font:2.4cqw/1.6 var(--f-body);text-align:justify;hyphens:auto}
+.start-side{position:absolute;left:6cqw;top:39cqw;font:600 1.5cqw var(--f-sans);letter-spacing:.3em;text-transform:uppercase;opacity:.65}
+
+/* 6 · serba pertama */
+.firsts{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr)}
+.cell{position:relative;overflow:hidden}
+.cell>.ph{position:absolute;inset:0}
+.chip{position:absolute;left:2.4cqw;bottom:2.4cqw;z-index:2;background:#fffdf8;color:#7c1d1a;font:italic 2cqw/1 var(--f-body);padding:.8cqw 1.4cqw}
+.first-card{background:var(--grain),#f7efe2;background-blend-mode:soft-light,normal;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3cqw;color:#7c1d1a}
+.first-card .a{font:500 5.6cqw/1 var(--f-display)}
+.first-card .script{font-size:10cqw;line-height:1}
+.first-card p.m{font:1.45cqw/1.5 var(--f-mono);color:#5a463a;margin-top:2cqw;max-width:36cqw}
+
+/* 7 & 17 · foto penuh */
+.full{position:absolute;inset:0}
+.sq{position:absolute;width:5.2cqw;aspect-ratio:1;background:#f4f2ed;box-shadow:0 .3cqw .8cqw rgba(0,0,0,.25);z-index:2;pointer-events:none}
+.star{position:absolute;z-index:2;width:9cqw;aspect-ratio:1;background:#f7f5ef;clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);filter:drop-shadow(0 0 2px rgba(0,0,0,.4));pointer-events:none}
+
+/* 8 · surat */
+.pg-letter{background:var(--grain),#f8f3e9;background-blend-mode:soft-light,normal}
+.letter-head{position:absolute;left:5cqw;top:5cqw;display:flex;align-items:flex-end;gap:2cqw}
+.letter-head .script{font-size:20cqw;line-height:.95;color:#7c1d1a}
+.letter-head .sub{font:italic 500 7.5cqw/.95 var(--f-display);padding-bottom:3.5cqw}
+.letter-body{position:absolute;left:7cqw;right:7cqw;top:34cqw;font:italic 2.22cqw/1.62 var(--f-body);color:#3b2d25}
+.ovals{float:right;width:25cqw;margin:.6cqw 0 1.6cqw 3cqw;background:var(--navy);padding:2cqw;display:flex;flex-direction:column;gap:1.6cqw}
+.ovals .ph{width:100%;aspect-ratio:4/3;border-radius:50%}
+.gsq{position:absolute;width:3.6cqw;aspect-ratio:1;background:#dcd8d2}
+
+/* 9–10 · dulu & sekarang */
+.cord{background:var(--grain),repeating-linear-gradient(90deg,#470d0c 0 .35%,#7b1f1c .35% 1.1%,#5b1311 1.1% 1.5%);background-blend-mode:overlay,normal;color:#f4e9dd}
+.cord-title{position:absolute;left:0;right:0;top:6cqw;text-align:center;font-size:12cqw;line-height:1}
+.plus{position:absolute;left:0;right:0;text-align:center;font:10cqw/1 var(--f-black);color:#f4efe8}
+.cord-cap{position:absolute;left:8cqw;right:8cqw;text-align:center;font:5cqw/1.15 var(--f-hand)}
+.lace{position:absolute;left:27cqw;top:40cqw;width:66cqw;aspect-ratio:10/9;filter:drop-shadow(0 .9cqw 1.4cqw rgba(0,0,0,.45))}
+.lace::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,transparent 0 22%,#efe6d8 30%) 0 0/2.4cqw 2.4cqw;-webkit-mask:var(--heart) center/contain no-repeat;mask:var(--heart) center/contain no-repeat}
+.lace .rim{position:absolute;inset:6.5%;background:#efe6d8;-webkit-mask:var(--heart) center/contain no-repeat;mask:var(--heart) center/contain no-repeat}
+.lace .ph{position:absolute;inset:9%;z-index:1;-webkit-mask:var(--heart) center/contain no-repeat;mask:var(--heart) center/contain no-repeat}
+.equals{position:absolute;left:6cqw;top:60cqw;font:18cqw/1 var(--f-black);color:#f4efe8}
+
+/* 11 · dunia kecil */
+.pg-world{background:#fffefc}
+.lw{position:absolute;left:var(--x);top:var(--y);width:var(--w)}
+.lw .n{font:1.7cqw var(--f-body);text-align:center;margin-bottom:.6cqw;color:#333}
+.lw .ph{aspect-ratio:var(--ar,1)}
+.w{position:absolute;font:italic 600 2.3cqw var(--f-display);color:#9b1d1d}
+.world-title{position:absolute;left:0;right:0;top:61cqw;text-align:center;color:#2b2b2b}
+.world-title .a{font:500 6.4cqw/1 var(--f-display)}
+.world-title .script{display:block;font-size:9cqw;line-height:1.1}
+
+/* 12 · tanya jawab */
+.pg-faq{background:var(--grain),radial-gradient(130% 100% at 30% 10%,#3c3c40,#222224);background-blend-mode:overlay,normal;color:#ecebe8}
+.faq-title{position:absolute;left:8cqw;top:8cqw;right:8cqw}
+.faq-title .a{font:500 6cqw/1.05 var(--f-display)}
+.faq-title .script{display:block;font-size:9.5cqw;line-height:1.1;margin-left:6cqw}
+.bubbles{position:absolute;left:7cqw;right:7cqw;top:38cqw;display:flex;flex-direction:column;gap:3.6cqw}
+.bub{position:relative;border-radius:3cqw;padding:2.2cqw 3cqw;font:500 2.05cqw/1.45 var(--f-sans);box-shadow:0 .5cqw 1.2cqw rgba(0,0,0,.3)}
+.bub::after{content:"";position:absolute;bottom:-1.6cqw;width:3cqw;height:2cqw;background:inherit}
+.bub b{font-weight:700}
+.bq{align-self:flex-start;max-width:64%;background:#fff;color:#232323}
+.bq::after{left:2.4cqw;clip-path:polygon(0 0,100% 0,0 100%)}
+.ba{align-self:flex-end;max-width:74%;background:#2f6c9f;color:#f3f7fb}
+.ba::after{right:2.4cqw;clip-path:polygon(0 0,100% 0,100% 100%)}
+
+/* 13 · bucket list */
+.pg-bucket{background:var(--grain),repeating-linear-gradient(90deg,#2d1b12 0 4%,#3d271b 4% 8.5%,#28170f 8.5% 9.6%);background-blend-mode:overlay,normal;color:#f1e8da}
+.bl-title{position:absolute;left:0;right:0;top:7cqw;text-align:center}
+.bl-title .a{font:italic 500 5.4cqw/1 var(--f-display)}
+.bl-title .script{display:block;font-size:13cqw;line-height:1.05}
+.strings{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+.bi{position:absolute;width:36cqw;z-index:2}
+.bi .pol{position:relative;transform:rotate(var(--r,0deg))}
+.pin{position:absolute;top:-1.3cqw;left:50%;z-index:3;width:2.8cqw;height:2.8cqw;border-radius:50%;transform:translateX(-50%);background:radial-gradient(circle at 35% 35%,#fff4c8,#d6b04a 45%,#7d5f18);box-shadow:0 .3cqw .5cqw rgba(0,0,0,.45)}
+.bi-cap{display:flex;gap:1.4cqw;align-items:flex-start;margin-top:2.6cqw;font:3.5cqw/1.15 var(--f-hand)}
+.box{flex:none;position:relative;width:2.6cqw;height:2.6cqw;margin-top:.5cqw;border:1.5px solid currentColor}
+.box.on::after{content:"";position:absolute;left:28%;top:2%;width:32%;height:62%;border:solid currentColor;border-width:0 .45cqw .45cqw 0;transform:rotate(45deg)}
+
+/* 14 · kuis */
+.pg-quiz{background:#fffefb}
+.wave{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.quiz{position:absolute;left:11cqw;right:11cqw;top:10cqw;bottom:11cqw;display:flex;flex-direction:column}
+.quiz-title{position:relative;isolation:isolate;align-self:center;font:400 11cqw/1.15 var(--f-script);color:#4a3426;padding:0 3cqw}
+.quiz-title::before{content:"";position:absolute;left:0;right:0;bottom:16%;height:34%;background:#ebdfcd;z-index:-1}
+.qtable{position:relative;margin-top:3cqw;border-top:1px solid #3a2a20;counter-reset:q}
+.qtable::after{content:"";position:absolute;top:0;bottom:0;right:21cqw;border-left:1px solid #3a2a20}
+.qrow{display:grid;grid-template-columns:1fr 10.5cqw 10.5cqw;align-items:center;gap:0;padding:1.45cqw 0;font:2.1cqw/1.35 var(--f-body);color:#3a2a20}
+.qrow.head{padding:2cqw 0 1cqw;font:500 2cqw/1 var(--f-sans);text-align:center}
+.qrow.head span:first-child{visibility:hidden}
+.qrow:not(.head){counter-increment:q}
+.qrow:not(.head) .qt{display:flex;gap:.8cqw;padding-right:2cqw}
+.qrow:not(.head) .qt::before{content:counter(q) ".";flex:none;width:3.2cqw;text-align:right}
+.dot{justify-self:center;width:3.4cqw;height:3.4cqw;border-radius:50%;border:1.5px solid #3a2a20}
+.dot.on{background:#7c1d1a;border-color:#7c1d1a;box-shadow:inset 0 0 0 .55cqw #fffefb}
+
+/* 15 · soundtrack */
+.pg-sound{background:var(--grain),#6c1915;background-blend-mode:overlay,normal;color:#f5ebe0}
+.sound{position:absolute;inset:6cqw;display:flex;flex-direction:column;justify-content:space-between}
+.song{display:flex;align-items:center;gap:3cqw}
+.song.rev{flex-direction:row-reverse;text-align:right}
+.rec{position:relative;flex:none;width:33cqw;height:20cqw}
+.rec .ph{position:absolute;left:0;top:0;width:20cqw;height:20cqw;z-index:2;box-shadow:0 .5cqw 1.2cqw rgba(0,0,0,.35)}
+.vinyl{position:absolute;left:12.5cqw;top:.5cqw;width:19cqw;height:19cqw;border-radius:50%;background:radial-gradient(circle,#e9dcc8 0 6%,#b3412f 6.5% 20%,#111 21%,transparent 22%),repeating-radial-gradient(circle,#141414 0 .35cqw,#2a2a2a .4cqw .55cqw);box-shadow:0 .4cqw 1cqw rgba(0,0,0,.4)}
+.song.rev .rec .ph{left:auto;right:0}
+.song.rev .vinyl{left:auto;right:12.5cqw}
+.song-txt{min-width:0}
+.song h3{font:700 2.3cqw/1.25 var(--f-sans);margin-bottom:1cqw}
+.song p{font:1.9cqw/1.45 var(--f-body);opacity:.92}
+.sound-title{position:relative;align-self:center;text-align:center;padding:2cqw 0}
+.burst{position:absolute;left:52%;top:46%;width:22cqw;height:22cqw;transform:translate(-20%,-62%);background:#25335f;z-index:0}
+.sound-title span{position:relative;z-index:1;display:block}
+.sound-title .a{font:500 7cqw/1 var(--f-display)}
+.sound-title .script{font-size:11cqw;line-height:1;margin-top:-1cqw}
+
+/* 16 · foto */
+.pg-photos{background:var(--grain),#f8f4ec;background-blend-mode:soft-light,normal}
+.pt-title{position:absolute;left:7cqw;top:8cqw;width:62cqw;color:#8c1f1f}
+.pt-title .sm{font:700 3.9cqw/1.15 var(--f-sans)}
+.pt-title .script{display:block;font-size:13cqw;line-height:.95}
+.strip{position:absolute;right:4.5cqw;top:4cqw;width:21cqw;padding:1.4cqw;background:#1f2b55;transform:rotate(4deg);display:flex;flex-direction:column;gap:1.4cqw;box-shadow:0 .6cqw 1.6cqw rgba(0,0,0,.3);z-index:2}
+.strip .ph{aspect-ratio:4/5}
+.quote{position:absolute;left:8cqw;top:39cqw;width:52cqw;font:italic 2.45cqw/1.6 var(--f-body);color:#4a3a30;text-align:center}
+.closing{position:absolute;left:8cqw;right:8cqw;top:126cqw;font:italic 2.2cqw/1.55 var(--f-body);color:#4a3a30;text-align:center}
+
+/* 18 · terima kasih */
+.pg-thanks{
+  background:
+    radial-gradient(circle,rgba(205,186,163,.42) 0 19%,transparent 20%) 0 0/26cqw 26cqw,
+    radial-gradient(circle,rgba(205,186,163,.42) 0 19%,transparent 20%) 13cqw 13cqw/26cqw 26cqw,
+    var(--grain),#4a2c1d;
+  background-blend-mode:normal,normal,overlay,normal;color:#f4ebdd}
+.band{position:absolute;left:0;top:0;bottom:0;width:20cqw;background:repeating-linear-gradient(90deg,#6b4a33 0 2.1cqw,#cdb9a1 2.1cqw 2.7cqw);box-shadow:.4cqw 0 1cqw rgba(0,0,0,.3);display:flex;flex-direction:column;align-items:center;justify-content:space-around;padding:8cqw 0}
+.band .ph{width:13cqw;aspect-ratio:1;border:.6cqw solid #f6f1e8}
+.th-title{position:absolute;left:27cqw;top:9cqw;display:flex;align-items:baseline;gap:1.5cqw}
+.th-title .a{font:500 12cqw/1 var(--f-display)}
+.th-title .script{font-size:10cqw;line-height:1}
+.th-list{position:absolute;left:27cqw;right:6cqw;top:34cqw;font:2.15cqw/1.7 var(--f-mono);background:rgba(74,44,29,.55);padding:2cqw 2cqw}
+
+/* 19 · bab selanjutnya */
+.pg-next{background:#fffefc}
+.film{position:absolute;left:-2cqw;right:-2cqw;top:6cqw;height:25cqw;padding:4cqw 3cqw;display:grid;grid-template-columns:repeat(4,1fr);gap:1.4cqw;background:var(--grain),#5b2a12;background-blend-mode:overlay,normal;transform:rotate(-1.5deg);box-shadow:0 .6cqw 1.4cqw rgba(0,0,0,.25)}
+.film::before,.film::after{content:"";position:absolute;left:0;right:0;height:1.7cqw;background:linear-gradient(90deg,#f3e9dc 0 55%,transparent 55%) 0 0/3cqw 100%}
+.film::before{top:1.1cqw}
+.film::after{bottom:1.1cqw}
+.film .ph{height:100%}
+.next-title{position:absolute;left:8cqw;top:38cqw;font-size:11.5cqw;line-height:1;color:var(--ink)}
+.next-text{position:absolute;left:8cqw;right:8cqw;top:55cqw;font:2.42cqw/1.62 var(--f-body);text-align:justify;hyphens:auto;color:#2f2520}
+.next-text em{font-style:italic}
+.next-text p+p{margin-top:1.4em}
+.next-sign{position:absolute;right:8cqw;bottom:8cqw;font:5.2cqw/1 var(--f-hand);color:#7c1d1a}
+
+/* 20 · belakang */
+.pg-back{background:var(--grain),linear-gradient(200deg,#7a201c,#5c1513 60%,#4e1110);background-blend-mode:overlay,normal;color:#f1e4d6}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="brand"><a class="back" href="../index.html" data-back aria-label="Kembali ke pilihan desain">&#8592;</a><b>Zine Merah</b><span>zine anniversary · 20 halaman</span></div>
+  <div class="tools">
+    <div class="seg" role="group" aria-label="Orientasi kertas">
+      <button class="btn" id="m-land" type="button" aria-pressed="false">Lanskap · 2 hal/lembar</button>
+      <button class="btn" id="m-port" type="button" aria-pressed="false">Potret · 1 hal/lembar</button>
+    </div>
+    <button class="btn" id="t-edit" type="button" aria-pressed="false">Mode edit</button>
+    <button class="btn edit-only" id="b-many" type="button">Isi banyak foto</button>
+    <button class="btn" id="b-share" type="button" data-top-only>Bagikan file</button>
+    <button class="btn primary" id="b-print" type="button" data-top-only>Cetak / PDF</button>
+    <button class="btn warn edit-only" id="b-reset" type="button">Reset</button>
+    <span class="status" id="status" aria-live="polite"></span>
+  </div>
+</header>
+
+<main class="book" id="book" lang="id">
+
+<!-- 1 -->
+<section class="page pg-end" data-id="end" data-label="pembuka">
+  <div class="frame">
+    <p class="eyebrow" e>sebuah zine kecil</p>
+    <h2 class="end-title" e>untuk kamu,</h2>
+    <p class="end-text" e>Buku kecil ini berisi potongan cerita kita. Yang lucu, yang manis, dan yang kadang bikin geleng-geleng kepala. Bacanya pelan-pelan, ya.</p>
+    <div class="end-sign"><span e>dari Dimas</span><i>&#9829;</i><span e>untuk Sekar</span></div>
+  </div>
+  <p class="end-stamp" e>vol. 01 · 2026</p>
+</section>
+
+<!-- 2 -->
+<section class="page pg-cover" data-id="cover" data-label="sampul">
+  <div class="spine"></div>
+  <h2 class="cover-title" e>1 tahun bersamamu.</h2>
+  <div class="ph bw cover-photo"></div>
+  <p class="cover-date" e>12/10/2026</p>
+</section>
+
+<!-- 3 -->
+<section class="page paper" data-id="about" data-label="tentang kita">
+  <div class="about-block">
+    <h2 e>TENTANG KITA</h2>
+    <p class="about-text" e>
+Kita berawal dari dua orang asing yang kebetulan ada di tempat yang sama. Satu obrolan kecil berubah jadi kebiasaan, lalu kebiasaan itu pelan-pelan jadi rumah.
+
+Kita bukan pasangan yang selalu punya rencana besar. Kebanyakan cerita kita justru lahir dari hal sepele: jajan tengah malam, salah belok waktu jalan-jalan, atau debat soal film yang ujungnya ketawa bareng.
+
+Kita juga nggak selalu sepakat. Ada hari yang berat dan kata-kata yang salah ucap. Tapi setiap kali, kita memilih untuk duduk lagi, ngobrol lagi, dan mulai lagi.
+
+Jadi kalau ada yang tanya kita ini siapa, jawabannya sederhana: dua orang yang betah di dekat satu sama lain.
+    </p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="page paper" data-id="aboutph" data-label="foto kita">
+  <div class="tape" style="left:44cqw;top:12cqw;transform:rotate(-3deg)"></div>
+  <div class="ph about-photo"></div>
+  <div class="heart-wrap"><div class="paper-heart"></div></div>
+  <p class="about-cap" e>kita, versi paling apa adanya.</p>
+</section>
+
+<!-- 5 -->
+<section class="page pg-start" data-id="start" data-label="awal">
+  <div class="big-n n1" e>12</div>
+  <div class="start-title"><span class="a" e>Awal dari</span><span class="script" e>selamanya</span></div>
+  <div class="pol" style="left:72cqw;top:47cqw;width:21cqw;transform:rotate(6deg)"><div class="ph bw"></div><p class="cap" e>hari itu</p></div>
+  <p class="start-text" e>
+Semuanya dimulai tanggal 12 Oktober, dari obrolan sederhana yang awalnya nggak kita anggap penting.
+
+Aku masih ingat rasanya deg-degan nunggu balasan chat, ajakan jalan pertama yang canggung, dan cerita-cerita yang nggak ada habisnya setelah itu. Siapa sangka, hal sesederhana itu jadi awal dari semua ini.
+  </p>
+  <div class="big-n n2" e>10</div>
+</section>
+
+<!-- 6 -->
+<section class="page" data-id="firsts" data-label="serba pertama">
+  <div class="firsts">
+    <div class="cell"><div class="ph"></div><span class="chip" e>kencan pertama</span></div>
+    <div class="cell"><div class="ph"></div><span class="chip" e>foto pertama</span></div>
+    <div class="cell"><div class="ph"></div><span class="chip" e>liburan pertama</span></div>
+    <div class="cell first-card">
+      <span class="a" e>Semua yang</span>
+      <span class="script" e>pertama</span>
+      <p class="m" e>Momen kecil yang dulu terasa biasa, sekarang jadi yang paling sering kita ceritakan ulang.</p>
+    </div>
+    <div class="cell"><div class="ph"></div><span class="chip" e>nonton pertama</span></div>
+    <div class="cell"><div class="ph"></div><span class="chip" e>ulang tahun pertama bareng</span></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="page" data-id="bw1" data-label="foto">
+  <div class="ph bw full"></div>
+  <i class="sq" style="left:66cqw;top:10cqw"></i><i class="sq" style="left:76cqw;top:5cqw"></i>
+  <i class="sq" style="left:20cqw;top:15cqw"></i><i class="sq" style="left:34cqw;top:22cqw;width:4cqw"></i>
+  <i class="sq" style="left:8cqw;top:110cqw"></i><i class="sq" style="left:15cqw;top:117cqw"></i><i class="sq" style="left:6cqw;top:124cqw;width:4cqw"></i>
+</section>
+
+<!-- 8 -->
+<section class="page pg-letter" data-id="letter" data-label="surat">
+  <i class="gsq" style="right:12cqw;top:4cqw"></i><i class="gsq" style="right:6cqw;top:7cqw;width:3cqw"></i>
+  <i class="gsq" style="left:4cqw;bottom:5cqw"></i><i class="gsq" style="right:5cqw;bottom:6cqw;width:3cqw"></i>
+  <div class="letter-head"><span class="script" e>Surat</span><span class="sub" e>untukmu</span></div>
+  <div class="letter-body">
+    <div class="ovals"><div class="ph"></div><div class="ph"></div></div>
+    <p e>
+Selamat ulang tahun jadian, sayang.
+
+Kadang aku masih suka mikir, kok bisa ya kita sampai di titik ini. Dari yang awalnya cuma saling balas chat, sekarang kita punya bahasa sendiri: lelucon yang cuma kita ngerti, panggilan-panggilan aneh, dan kebiasaan kecil yang nggak bisa aku jelasin ke orang lain.
+
+Terima kasih sudah ada di hari-hari baikku, dan lebih-lebih di hari-hari burukku. Terima kasih sudah sabar waktu aku lagi susah dimengerti.
+
+Aku nggak tahu tahun depan kita bakal ada di mana. Tapi aku mau tetap jadi orang yang kamu cari pertama kali waktu ada kabar baik, dan orang yang kamu peluk paling lama waktu ada kabar buruk.
+
+Here's to us, and to all the little days we haven't lived yet.
+Aku sayang kamu.
+    </p>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="page cord" data-id="then" data-label="dulu">
+  <h2 class="cord-title script" e>dulu</h2>
+  <div class="pol" style="left:31cqw;top:22cqw;width:38cqw;transform:rotate(-3deg)"><div class="ph"></div><p class="cap" e>dia, umur 4</p></div>
+  <div class="plus" style="top:66cqw">+</div>
+  <div class="pol" style="left:31cqw;top:79cqw;width:38cqw;transform:rotate(2.5deg)"><div class="ph"></div><p class="cap" e>aku, umur 3</p></div>
+  <p class="cord-cap" style="top:127cqw" e>dua anak kecil yang belum saling kenal.</p>
+</section>
+
+<!-- 10 -->
+<section class="page cord" data-id="now" data-label="sekarang">
+  <h2 class="cord-title script" e>sekarang</h2>
+  <div class="equals">=</div>
+  <div class="lace"><div class="rim"></div><div class="ph"></div></div>
+  <p class="cord-cap" style="top:110cqw" e>dan entah bagaimana, jadi kita.</p>
+</section>
+
+<!-- 11 -->
+<section class="page pg-world" data-id="world" data-label="dunia kecil">
+  <div class="lw" style="--x:36cqw;--y:5cqw;--w:17cqw;--ar:4/3"><p class="n">(1)</p><div class="ph"></div></div>
+  <div class="lw" style="--x:71cqw;--y:8cqw;--w:17cqw;--ar:4/5"><p class="n">(2)</p><div class="ph"></div></div>
+  <div class="lw" style="--x:9cqw;--y:22cqw;--w:18cqw;--ar:4/5"><p class="n">(3)</p><div class="ph"></div></div>
+  <div class="lw" style="--x:47cqw;--y:32cqw;--w:17cqw"><p class="n">(4)</p><div class="ph"></div></div>
+  <div class="lw" style="--x:7cqw;--y:59cqw;--w:19cqw;--ar:4/3"><p class="n">(5)</p><div class="ph"></div></div>
+  <div class="lw" style="--x:73cqw;--y:57cqw;--w:18cqw"><p class="n">(6)</p><div class="ph"></div></div>
+  <div class="lw" style="--x:40cqw;--y:84cqw;--w:18cqw"><p class="n">(7)</p><div class="ph"></div></div>
+  <div class="lw" style="--x:10cqw;--y:103cqw;--w:18cqw"><p class="n">(8)</p><div class="ph"></div></div>
+  <div class="lw" style="--x:68cqw;--y:99cqw;--w:19cqw"><p class="n">(9)</p><div class="ph"></div></div>
+  <span class="w" style="left:13cqw;top:13cqw" e>sebagian</span>
+  <span class="w" style="left:75cqw;top:47cqw" e>momen</span>
+  <span class="w" style="left:15cqw;top:52cqw" e>dalam</span>
+  <span class="w" style="left:28cqw;top:94cqw" e>hidup</span>
+  <span class="w" style="left:76cqw;top:89cqw" e>kita</span>
+  <div class="world-title"><span class="a" e>Dunia kecil</span><span class="script" e>kita</span></div>
+</section>
+
+<!-- 12 -->
+<section class="page pg-faq" data-id="faq" data-label="tanya jawab">
+  <div class="faq-title"><span class="a" e>Pertanyaan yang</span><span class="script" e>jarang ditanya</span></div>
+  <div class="bubbles">
+    <div class="bub bq"><b>T:</b> <span e>Kapan pertama kali kamu sadar, "oh, aku sayang dia"?</span></div>
+    <div class="bub ba"><b>J:</b> <span e>Waktu aku sakit dan dia datang bawa bubur yang salah pesan. Rasanya aneh, tapi aku habiskan semuanya. Dari situ aku tahu.</span></div>
+    <div class="bub bq"><b>T:</b> <span e>Kebiasaan kecil dia yang paling kamu suka?</span></div>
+    <div class="bub ba"><b>J:</b> <span e>Cara dia selalu nanya "udah makan?" bahkan waktu dia sendiri belum. Kecil, tapi bikin aku merasa dijaga.</span></div>
+    <div class="bub bq"><b>T:</b> <span e>Satu harapan buat kita ke depannya?</span></div>
+    <div class="bub ba"><b>J:</b> <span e>Semoga kita tetap jadi teman paling seru buat satu sama lain, sesibuk apa pun hidup nanti.</span></div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="page pg-bucket" data-id="bucket" data-label="bucket list">
+  <div class="bl-title"><span class="a" e>yang mau kita lakukan</span><span class="script" e>Bucket List</span></div>
+  <svg class="strings" viewBox="0 0 100 141.42" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M26 35 Q50 55 72 51 M72 51 Q48 72 26 81 M26 81 Q50 101 72 98" fill="none" stroke="#4a6a9c" stroke-width=".45"/>
+  </svg>
+  <div class="bi" style="left:8cqw;top:35cqw"><div class="pol" style="--r:-4deg;--ar:4/3"><i class="pin"></i><div class="ph"></div></div><div class="bi-cap"><button class="ck box" type="button" aria-label="Tandai selesai"></button><span e>Liburan berdua ke Labuan Bajo</span></div></div>
+  <div class="bi" style="left:54cqw;top:51cqw"><div class="pol" style="--r:3deg;--ar:4/3"><i class="pin"></i><div class="ph"></div></div><div class="bi-cap"><button class="ck box" type="button" aria-label="Tandai selesai"></button><span e>Masak bareng menu yang paling susah</span></div></div>
+  <div class="bi" style="left:8cqw;top:81cqw"><div class="pol" style="--r:2deg;--ar:4/3"><i class="pin"></i><div class="ph"></div></div><div class="bi-cap"><button class="ck box" type="button" aria-label="Tandai selesai"></button><span e>Nonton konser band favorit dari barisan depan</span></div></div>
+  <div class="bi" style="left:54cqw;top:98cqw"><div class="pol" style="--r:-3deg;--ar:4/3"><i class="pin"></i><div class="ph"></div></div><div class="bi-cap"><button class="ck box" type="button" aria-label="Tandai selesai"></button><span e>Foto tahunan di tempat yang sama</span></div></div>
+</section>
+
+<!-- 14 -->
+<section class="page pg-quiz" data-id="quiz" data-label="kuis kecil">
+  <svg class="wave" viewBox="0 0 100 141.42" preserveAspectRatio="none" aria-hidden="true"><path id="wave-path" fill="none" stroke="#5d78a5" stroke-width="1.1" stroke-linejoin="round"/></svg>
+  <div class="quiz">
+    <h2 class="quiz-title" e>Kuis kecil</h2>
+    <div class="qtable">
+      <div class="qrow head"><span>&nbsp;</span><span e>Dimas</span><span e>Sekar</span></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang duluan bilang sayang?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang paling sering telat?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang lebih jago masak?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang gampang nangis nonton film?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang sering lupa naruh barang?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang lebih spontan?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang lebih rapi?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang makannya paling banyak?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang tidur duluan?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang lebih sabar?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang lebih sering nyasar?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+      <div class="qrow"><span class="qt"><span e>Siapa yang duluan minta maaf?</span></span><button class="ck dot" type="button" aria-label="Pilih"></button><button class="ck dot" type="button" aria-label="Pilih"></button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="page pg-sound" data-id="sound" data-label="soundtrack">
+  <div class="sound">
+    <div class="song"><div class="rec"><div class="ph"></div><i class="vinyl"></i></div><div class="song-txt"><h3 e>Komang · Raim Laode</h3><p e>Lagu yang diputar terus waktu kita lagi sering-seringnya teleponan sampai ketiduran.</p></div></div>
+    <div class="song rev"><div class="rec"><div class="ph"></div><i class="vinyl"></i></div><div class="song-txt"><h3 e>Kasih Putih · Glenn Fredly</h3><p e>Diputar di mobil waktu pulang dari kencan pertama. Sejak itu, ini lagu kita.</p></div></div>
+    <div class="sound-title"><i class="burst" id="burst"></i><span class="a" e>Soundtrack</span><span class="script" e>kita</span></div>
+    <div class="song"><div class="rec"><div class="ph"></div><i class="vinyl"></i></div><div class="song-txt"><h3 e>Sempurna · Andra and The Backbone</h3><p e>Lagu karaoke wajib kita. Suara sama-sama fals, tapi semangatnya juara.</p></div></div>
+    <div class="song rev"><div class="rec"><div class="ph"></div><i class="vinyl"></i></div><div class="song-txt"><h3 e>Kangen · Dewa 19</h3><p e>Teman setia di bulan-bulan LDR, didengar sambil menghitung hari sampai ketemu lagi.</p></div></div>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="page pg-photos" data-id="photos" data-label="dalam foto">
+  <div class="pt-title"><span class="sm" e>Kita simpan cinta ini</span><span class="script" e>dalam foto</span></div>
+  <div class="strip"><div class="ph"></div><div class="ph"></div><div class="ph"></div><div class="ph"></div></div>
+  <p class="quote" e>"Setiap foto menyimpan sepotong hari: tempatnya, cuacanya, dan versi kita yang ada di momen itu."</p>
+  <div class="pol" style="left:6cqw;top:80cqw;width:26cqw;transform:rotate(-6deg);--ar:4/5"><div class="ph"></div><p class="cap" e>&nbsp;</p></div>
+  <div class="pol" style="left:33cqw;top:58cqw;width:28cqw;transform:rotate(5deg)"><div class="tape" style="left:8cqw;top:-1.6cqw;width:10cqw;transform:rotate(-4deg)"></div><div class="ph"></div><p class="cap" e>kamu + aku &lt;3</p></div>
+  <div class="pol" style="left:40cqw;top:90cqw;width:28cqw;transform:rotate(3deg)"><div class="ph"></div><p class="cap" e>&nbsp;</p></div>
+  <p class="closing" e>Semoga foto-foto ini mengingatkan kita sudah sejauh apa kita melangkah, dan masih sebanyak apa momen yang menunggu.</p>
+</section>
+
+<!-- 17 -->
+<section class="page" data-id="bw2" data-label="foto">
+  <div class="ph bw full"></div>
+  <i class="star" style="left:10cqw;top:12cqw"></i>
+  <i class="star" style="left:62cqw;top:34cqw;width:8cqw"></i>
+  <i class="star" style="left:9cqw;top:118cqw;width:10cqw"></i>
+</section>
+
+<!-- 18 -->
+<section class="page pg-thanks" data-id="thanks" data-label="terima kasih">
+  <div class="band"><div class="ph"></div><div class="ph"></div><div class="ph"></div></div>
+  <div class="th-title"><span class="a" e>10</span><span class="script" e>terima kasih</span></div>
+  <p class="th-list" e>
+1. Terima kasih sudah selalu mau dengar ceritaku, sepanjang apa pun.
+2. Terima kasih sudah berusaha mengerti aku, bahkan waktu aku sendiri bingung.
+3. Terima kasih untuk tawa-tawa yang nggak direncanakan.
+4. Terima kasih untuk perhatian kecil yang kamu kira nggak aku sadari.
+5. Terima kasih sudah sabar menghadapi aku.
+6. Terima kasih sudah memilih jalan bareng.
+7. Terima kasih untuk semua kenangan yang kita kumpulkan.
+8. Terima kasih sudah tetap tinggal di hari-hari yang berat.
+9. Terima kasih sudah jadi bagian dari rutinitasku.
+10. Terima kasih untuk satu tahun ini. Semoga masih banyak tahun berikutnya.
+  </p>
+</section>
+
+<!-- 19 -->
+<section class="page pg-next" data-id="next" data-label="bab selanjutnya">
+  <div class="film"><div class="ph"></div><div class="ph"></div><div class="ph"></div><div class="ph"></div></div>
+  <h2 class="next-title script" e>Bab selanjutnya</h2>
+  <div class="next-text">
+    <p e>
+Kalau dihitung-hitung, ternyata sudah banyak sekali cerita yang kita lewati. Dari hal-hal kecil yang dulu terasa biasa, sampai momen yang sekarang jadi favorit untuk diceritakan ulang.
+
+Masih banyak tempat yang belum kita datangi, foto yang belum kita ambil, dan kebiasaan baru yang belum kita temukan. Aku nggak sabar.
+
+Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pelan-pelan, dengan cara kita sendiri, dan tetap memilih satu sama lain di setiap halamannya.
+    </p>
+    <p><em e>Untuk bab selanjutnya, dan semua yang belum kita alami. &lt;3</em></p>
+  </div>
+  <p class="next-sign" e>sampai jumpa di halaman berikutnya.</p>
+</section>
+
+<!-- 20 -->
+<section class="page pg-back" data-id="back" data-label="sampul belakang">
+  <div class="spine r"></div>
+  <span class="bw-word" style="left:30cqw;top:38cqw" e>aku</span>
+  <span class="bw-word" style="left:55cqw;top:65cqw" e>sayang</span>
+  <span class="bw-word" style="left:37cqw;top:93cqw" e>kamu</span>
+  <p class="made" e>dibuat dengan sayang oleh Dimas</p>
+</section>
+</main>
+
+<input type="file" id="file-one" accept="image/*" hidden>
+<input type="file" id="file-cam" accept="image/*" capture="environment" hidden>
+<input type="file" id="file-many" accept="image/*" multiple hidden>
+<div class="menu" id="menu" hidden>
+  <div class="menu-card" role="dialog" aria-modal="true" aria-labelledby="menu-title">
+    <p class="menu-title" id="menu-title">Foto</p>
+    <button class="mbtn" type="button" data-act="gallery">Pilih dari galeri</button>
+    <button class="mbtn" type="button" data-act="camera">Ambil dengan kamera</button>
+    <button class="mbtn" type="button" data-act="pan" data-has>Atur posisi foto</button>
+    <button class="mbtn danger" type="button" data-act="remove" data-has>Hapus foto</button>
+    <button class="mbtn ghost" type="button" data-act="cancel">Batal</button>
+  </div>
+</div>
+<button class="btn primary pan-done" id="pan-done" type="button" hidden>Selesai atur posisi</button>
+<div class="toast" id="toast" role="status"></div>
+
+<script id="sb-data" type="application/json">null</script>
+<script>
+(() => {
+  "use strict";
+  const PRISTINE = "<!doctype html>\n" + document.documentElement.outerHTML;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const DESIGN = document.documentElement.dataset.design || "zine-merah";
+  const DEF_MODE = document.documentElement.dataset.mode === "port" ? "port" : "land";
+  const book = $("#book");
+  const pages = $$(".page", book);
+
+  let framed = false;
+  try { framed = window.self !== window.top; } catch (e) { framed = true; }
+  if (framed) document.body.classList.add("framed");
+
+  /* ---------- keys & defaults ---------- */
+  const defaults = new Map();
+  const texts = [], photos = [], checks = [];
+  const tidy = s => s.replace(/\r/g, "").replace(/[ \t]+\n/g, "\n").replace(/\n[ \t]+/g, "\n").trim();
+  pages.forEach(p => {
+    const id = p.dataset.id;
+    $$("[e]", p).forEach((el, i) => { el.dataset.k = id + "-t" + i; const t = tidy(el.textContent); el.textContent = t; defaults.set(el, t); texts.push(el); });
+    $$(".ph", p).forEach((el, i) => { el.dataset.k = id + "-p" + i; photos.push(el); });
+    $$(".ck", p).forEach((el, i) => { el.dataset.k = id + "-c" + i; checks.push(el); });
+  });
+
+  /* ---------- storage ---------- */
+  function openDb() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open("zine-kita", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("kv");
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    });
+  }
+  async function dbGet(k) {
+    try { const db = await openDb(); return await new Promise((res, rej) => { const q = db.transaction("kv").objectStore("kv").get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); }
+    catch (e) { return null; }
+  }
+  async function dbSet(k, v) {
+    try { const db = await openDb(); await new Promise((res, rej) => { const t = db.transaction("kv", "readwrite"); t.objectStore("kv").put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); }); return true; }
+    catch (e) { return false; }
+  }
+
+  let embedded = null;
+  try { embedded = JSON.parse($("#sb-data").textContent); } catch (e) { embedded = null; }
+  const newId = () => Math.random().toString(36).slice(2, 10);
+  let state = { sid: newId(), texts: {}, photos: {}, checks: {}, mode: innerWidth < 720 ? "port" : DEF_MODE, edit: !embedded };
+  let storeKey = DESIGN === "zine-merah" ? "state" : DESIGN + ":state";
+  if (embedded) document.body.classList.add("shared");
+
+  const statusEl = $("#status");
+  let saveTimer = null;
+  function save() {
+    statusEl.textContent = "Menyimpan…";
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      const ok = await dbSet(storeKey, state);
+      statusEl.textContent = ok ? "Tersimpan" : "Tidak tersimpan";
+    }, 350);
+  }
+  const toastEl = $("#toast");
+  let toastTimer = null;
+  function toast(msg) { toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2600); }
+
+  /* ---------- render ---------- */
+  const CAM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l1.6-2.2h6.8L17 8h3v11H4z"/><circle cx="12" cy="13.2" r="3.6"/></svg>';
+  function renderPhoto(ph) {
+    const d = state.photos[ph.dataset.k];
+    ph.classList.toggle("has", !!d);
+    ph.textContent = "";
+    if (d) {
+      const img = new Image();
+      img.alt = ""; img.draggable = false; img.src = d.src;
+      img.style.objectPosition = (d.x ?? 50) + "% " + (d.y ?? 50) + "%";
+      const rm = document.createElement("button");
+      rm.type = "button"; rm.className = "ph-rm edit-only"; rm.setAttribute("aria-label", "Hapus foto"); rm.textContent = "×";
+      ph.append(img, rm);
+    } else {
+      ph.insertAdjacentHTML("beforeend", '<span class="ph-empty">' + CAM + '</span>');
+    }
+  }
+  const esc = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const rawOf = el => { const v = state.texts[el.dataset.k]; return v != null ? v : defaults.get(el); };
+  function renderText(el) {
+    const raw = rawOf(el);
+    if (el.hasAttribute("rich") && document.activeElement !== el) el.innerHTML = esc(raw).replace(/\*([^*\n]+)\*/g, "<b>$1</b>");
+    else el.textContent = raw;
+  }
+  book.addEventListener("focusin", e => { const el = e.target.closest && e.target.closest("[rich]"); if (el && state.edit) el.textContent = rawOf(el); });
+  book.addEventListener("focusout", e => { const el = e.target.closest && e.target.closest("[rich]"); if (el) setTimeout(() => renderText(el), 0); });
+  function renderAll() {
+    texts.forEach(renderText);
+    photos.forEach(renderPhoto);
+    checks.forEach(el => { const on = !!state.checks[el.dataset.k]; el.classList.toggle("on", on); el.setAttribute("aria-pressed", on); });
+  }
+
+  /* ---------- layout ---------- */
+  const pageStyle = $("#page-size");
+  function layout() {
+    const m = state.mode;
+    const groups = [];
+    if (m === "land") for (let i = 0; i < pages.length; i += 2) groups.push(pages.slice(i, i + 2));
+    else pages.forEach(p => groups.push([p]));
+    const frag = document.createDocumentFragment();
+    groups.forEach(g => {
+      const wrap = document.createElement("div"); wrap.className = "sheet-wrap";
+      const lab = document.createElement("div"); lab.className = "sheet-label";
+      const nums = g.map(p => pages.indexOf(p) + 1);
+      const n = document.createElement("span"); n.className = "lab-n"; n.textContent = "hal. " + nums.join(" & ");
+      const t = document.createElement("span"); t.className = "lab-t"; t.textContent = g.map(p => p.dataset.label).join(" · ");
+      lab.append(n, t);
+      const sheet = document.createElement("div"); sheet.className = "sheet " + m;
+      g.forEach(p => sheet.append(p));
+      wrap.append(lab, sheet); frag.append(wrap);
+    });
+    book.replaceChildren(frag);
+    pageStyle.textContent = "@page{size:A4 " + (m === "land" ? "landscape" : "portrait") + ";margin:0}";
+    $("#m-land").setAttribute("aria-pressed", m === "land");
+    $("#m-port").setAttribute("aria-pressed", m === "port");
+  }
+
+  /* ---------- edit mode ---------- */
+  let plainOnly = null;
+  function setEdit(on) {
+    state.edit = on;
+    document.body.classList.toggle("editing", on);
+    $("#t-edit").setAttribute("aria-pressed", on);
+    $("#t-edit").textContent = on ? "Selesai edit" : "Mode edit";
+    if (!on) { stopPan(); $("#menu").hidden = true; }
+    texts.forEach(el => {
+      if (on) {
+        if (plainOnly === null) { el.contentEditable = "plaintext-only"; plainOnly = el.contentEditable === "plaintext-only"; }
+        el.contentEditable = plainOnly ? "plaintext-only" : "true";
+        el.spellcheck = false;
+      } else el.removeAttribute("contenteditable");
+    });
+    photos.forEach(ph => {
+      if (on) { ph.tabIndex = 0; ph.setAttribute("role", "button"); ph.setAttribute("aria-label", "Pilih foto"); }
+      else { ph.removeAttribute("tabindex"); ph.removeAttribute("role"); ph.removeAttribute("aria-label"); }
+    });
+  }
+
+  book.addEventListener("input", e => {
+    const el = e.target.closest("[e]");
+    if (!el) return;
+    state.texts[el.dataset.k] = el.innerText.replace(/\n$/, "");
+    save();
+  });
+  book.addEventListener("paste", e => {
+    const el = e.target.closest("[e]");
+    if (!el || plainOnly) return;
+    e.preventDefault();
+    const txt = (e.clipboardData || window.clipboardData).getData("text/plain");
+    document.execCommand("insertText", false, txt);
+  });
+
+  /* ---------- photos ---------- */
+  const isHeic = f => /image\/hei[cf]/i.test(f.type) || /\.hei[cf]$/i.test(f.name || "");
+  let heicLib = null;
+  function loadHeic() {
+    const urls = ["https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js", "https://unpkg.com/heic2any@0.0.4/dist/heic2any.min.js"];
+    const tryLoad = i => new Promise((res, rej) => {
+      if (i >= urls.length) { rej(new Error("heic")); return; }
+      const s = document.createElement("script");
+      s.src = urls[i];
+      s.onload = () => window.heic2any ? res(window.heic2any) : rej(new Error("heic"));
+      s.onerror = () => { s.remove(); tryLoad(i + 1).then(res, rej); };
+      document.head.append(s);
+    });
+    if (!heicLib) heicLib = tryLoad(0).catch(e => { heicLib = null; throw e; });
+    return heicLib;
+  }
+  async function heicToJpeg(file) {
+    const conv = await loadHeic();
+    const out = await conv({ blob: file, toType: "image/jpeg", quality: 0.9 });
+    return Array.isArray(out) ? out[0] : out;
+  }
+  async function draw(blob) {
+    const max = 1600;
+    let src = null, w = 0, h = 0, url = null;
+    try {
+      if (window.createImageBitmap) {
+        try { src = await createImageBitmap(blob, { imageOrientation: "from-image" }); w = src.width; h = src.height; } catch (e) { src = null; }
+      }
+      if (!src) {
+        url = URL.createObjectURL(blob);
+        const img = new Image(); img.src = url; await img.decode();
+        src = img; w = img.naturalWidth; h = img.naturalHeight;
+      }
+      if (!w || !h) throw new Error("empty");
+      const s = Math.min(1, max / Math.max(w, h));
+      const c = document.createElement("canvas"); c.width = Math.round(w * s); c.height = Math.round(h * s);
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(src, 0, 0, c.width, c.height);
+      if (src.close) src.close();
+      return c.toDataURL("image/jpeg", 0.85);
+    } finally { if (url) URL.revokeObjectURL(url); }
+  }
+  async function compress(file) {
+    if (isHeic(file)) {
+      try { return await draw(file); } catch (e) { return await draw(await heicToJpeg(file)); }
+    }
+    try { return await draw(file); }
+    catch (e) { return await draw(await heicToJpeg(file)); }
+  }
+  const imageFiles = list => Array.from(list || []).filter(f => /^image\//.test(f.type) || isHeic(f) || !f.type);
+
+  let busy = false;
+  async function placeFiles(files, first) {
+    files = imageFiles(files);
+    if (!files.length) return;
+    if (busy) { toast("Tunggu, foto sebelumnya masih diproses."); return; }
+    busy = true;
+    const empties = photos.filter(ph => ph !== first && !state.photos[ph.dataset.k]);
+    const targets = first ? [first, ...empties] : empties;
+    let n = 0, failed = 0, i = 0;
+    for (const f of files) {
+      const ph = targets[i]; if (!ph) break;
+      statusEl.textContent = "Memproses foto " + (n + failed + 1) + "/" + Math.min(files.length, targets.length) + "…";
+      ph.classList.add("loading");
+      try { state.photos[ph.dataset.k] = { src: await compress(f), x: 50, y: 50 }; renderPhoto(ph); n++; i++; }
+      catch (e) { failed++; }
+      ph.classList.remove("loading");
+    }
+    busy = false;
+    save();
+    const left = files.length - n - failed;
+    if (failed) toast(failed + " foto tidak bisa dibuka. Foto HEIC perlu koneksi internet; atau simpan ulang sebagai JPG.");
+    else if (left > 0) toast(n + " foto dimasukkan. " + left + " foto tidak muat, semua bingkai sudah terisi.");
+    else if (files.length > 1) toast(n + " foto dimasukkan.");
+  }
+
+  let target = null, lastPh = null;
+  const fileOne = $("#file-one"), fileCam = $("#file-cam"), fileMany = $("#file-many");
+  const openInput = inp => { inp.value = ""; inp.click(); };
+  fileOne.addEventListener("change", () => placeFiles(fileOne.files, target));
+  fileCam.addEventListener("change", () => placeFiles(fileCam.files, target));
+  fileMany.addEventListener("change", () => placeFiles(fileMany.files, null));
+  $("#b-many").addEventListener("click", () => openInput(fileMany));
+
+  /* menu */
+  const menu = $("#menu");
+  function openMenu(ph) {
+    target = lastPh = ph;
+    const has = !!state.photos[ph.dataset.k];
+    $$("[data-has]", menu).forEach(b => { b.hidden = !has; });
+    menu.hidden = false;
+    $(".mbtn", menu).focus();
+  }
+  function closeMenu() { menu.hidden = true; if (target) try { target.focus({ preventScroll: true }); } catch (e) {} }
+  menu.addEventListener("click", e => {
+    if (e.target === menu) { closeMenu(); return; }
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const act = b.dataset.act, ph = target;
+    menu.hidden = true;
+    if (act === "gallery") openInput(fileOne);
+    else if (act === "camera") openInput(fileCam);
+    else if (act === "pan") startPan(ph);
+    else if (act === "remove") { delete state.photos[ph.dataset.k]; renderPhoto(ph); save(); }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { if (!menu.hidden) closeMenu(); else if (panPh) stopPan(); }
+  });
+
+  /* pan mode (touch needs it so the page still scrolls) */
+  let panPh = null;
+  const panDone = $("#pan-done");
+  function startPan(ph) { stopPan(); panPh = ph; ph.classList.add("panning"); panDone.hidden = false; }
+  function stopPan() { if (panPh) panPh.classList.remove("panning"); panPh = null; panDone.hidden = true; }
+  panDone.addEventListener("click", () => { stopPan(); save(); });
+
+  let drag = null;
+  book.addEventListener("pointerdown", e => {
+    if (!state.edit || e.button > 0) return;
+    const ph = e.target.closest(".ph");
+    if (!ph || e.target.closest(".ph-rm")) return;
+    const img = ph.querySelector("img");
+    const d = state.photos[ph.dataset.k];
+    const canPan = !!img && (e.pointerType === "mouse" || ph === panPh);
+    drag = { ph, img, canPan, x: e.clientX, y: e.clientY, moved: false, sx: d ? d.x ?? 50 : 50, sy: d ? d.y ?? 50 : 50 };
+    if (canPan) { e.preventDefault(); try { ph.setPointerCapture(e.pointerId); } catch (_) {} }
+  });
+  book.addEventListener("pointermove", e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+    drag.moved = true;
+    if (!drag.canPan) return;
+    const { ph, img } = drag;
+    ph.classList.add("grabbing");
+    const fw = ph.clientWidth, fh = ph.clientHeight, nw = img.naturalWidth || 1, nh = img.naturalHeight || 1;
+    const s = Math.max(fw / nw, fh / nh), ox = nw * s - fw, oy = nh * s - fh;
+    const clamp = v => Math.max(0, Math.min(100, v));
+    const d = state.photos[ph.dataset.k];
+    if (ox > 1) d.x = clamp(drag.sx - dx / ox * 100);
+    if (oy > 1) d.y = clamp(drag.sy - dy / oy * 100);
+    img.style.objectPosition = d.x + "% " + d.y + "%";
+  });
+  function endDrag(e) {
+    if (!drag) return;
+    const dd = drag; drag = null;
+    dd.ph.classList.remove("grabbing");
+    if (dd.moved) { suppressUntil = Date.now() + 400; if (dd.canPan) save(); }
+  }
+  let suppressUntil = 0;
+  book.addEventListener("pointerup", endDrag);
+  book.addEventListener("pointercancel", endDrag);
+  book.addEventListener("keydown", e => {
+    const ph = e.target.closest(".ph");
+    if (state.edit && ph && e.target === ph && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openMenu(ph); }
+  });
+  book.addEventListener("focusin", e => { const ph = e.target.closest && e.target.closest(".ph"); if (ph) lastPh = ph; });
+
+  /* drag & drop files */
+  let dropPh = null;
+  const hasFiles = e => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
+  book.addEventListener("dragover", e => {
+    if (!state.edit || !hasFiles(e)) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = "copy";
+    const ph = e.target.closest(".ph");
+    if (ph !== dropPh) { if (dropPh) dropPh.classList.remove("drop"); dropPh = ph; if (ph) ph.classList.add("drop"); }
+  });
+  book.addEventListener("dragleave", e => { if (dropPh && !book.contains(e.relatedTarget)) { dropPh.classList.remove("drop"); dropPh = null; } });
+  book.addEventListener("drop", e => {
+    if (!state.edit || !hasFiles(e)) return;
+    e.preventDefault();
+    const ph = e.target.closest(".ph");
+    if (dropPh) dropPh.classList.remove("drop"); dropPh = null;
+    placeFiles(e.dataTransfer.files, ph);
+  });
+  window.addEventListener("dragover", e => { if (hasFiles(e)) e.preventDefault(); });
+  window.addEventListener("drop", e => { if (hasFiles(e) && !book.contains(e.target)) { e.preventDefault(); if (state.edit) placeFiles(e.dataTransfer.files, null); } });
+
+  /* paste an image (Ctrl/Cmd+V) */
+  document.addEventListener("paste", e => {
+    if (!state.edit || !e.clipboardData) return;
+    const files = Array.from(e.clipboardData.items || []).filter(it => it.kind === "file" && /^image\//.test(it.type)).map(it => it.getAsFile()).filter(Boolean);
+    if (!files.length) return;
+    e.preventDefault(); e.stopPropagation();
+    placeFiles(files, lastPh && document.contains(lastPh) ? lastPh : null);
+  }, true);
+
+  book.addEventListener("click", e => {
+    const rm = e.target.closest(".ph-rm");
+    if (rm) { const ph = rm.closest(".ph"); if (ph === panPh) stopPan(); delete state.photos[ph.dataset.k]; renderPhoto(ph); save(); return; }
+    const ph = e.target.closest(".ph");
+    if (ph && state.edit) {
+      if (Date.now() < suppressUntil || ph === panPh) return;
+      if (panPh) { stopPan(); save(); }
+      openMenu(ph); return;
+    }
+    const ck = e.target.closest(".ck");
+    if (ck) { const k = ck.dataset.k; state.checks[k] = !state.checks[k]; ck.classList.toggle("on", state.checks[k]); ck.setAttribute("aria-pressed", state.checks[k]); save(); }
+  });
+
+  /* ---------- toolbar ---------- */
+  $("#m-land").addEventListener("click", () => { state.mode = "land"; layout(); save(); });
+  $("#m-port").addEventListener("click", () => { state.mode = "port"; layout(); save(); });
+  $("#t-edit").addEventListener("click", () => { setEdit(!state.edit); save(); });
+  $("#b-print").addEventListener("click", () => {
+    if (document.activeElement) document.activeElement.blur();
+    setTimeout(() => window.print(), 50);
+  });
+  const resetBtn = $("#b-reset");
+  let resetArmed = null;
+  resetBtn.addEventListener("click", () => {
+    if (!resetArmed) {
+      resetBtn.textContent = "Yakin? Klik lagi";
+      resetArmed = setTimeout(() => { resetArmed = null; resetBtn.textContent = "Reset"; }, 3500);
+      return;
+    }
+    clearTimeout(resetArmed); resetArmed = null; resetBtn.textContent = "Reset";
+    state.texts = {}; state.photos = {}; state.checks = {};
+    renderAll(); save(); toast("Semua foto dan tulisan kembali ke awal.");
+  });
+
+  function download(blob, name) {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }
+  $("#b-share").addEventListener("click", async () => {
+    const data = Object.assign({}, state, { edit: false });
+    const json = JSON.stringify(data).replace(/</g, "\\u003c");
+    const open = '<scr' + 'ipt id="sb-data" type="application/json">';
+    const a = PRISTINE.indexOf(open), b = PRISTINE.indexOf("</scr" + "ipt>", a);
+    if (a < 0 || b < 0) { toast("File tidak bisa dibuat."); return; }
+    const html = PRISTINE.slice(0, a + open.length) + json + PRISTINE.slice(b);
+    const name = DESIGN + ".html";
+    const blob = new Blob([html], { type: "text/html" });
+    try {
+      const file = new File([blob], name, { type: "text/html" });
+      if (matchMedia("(pointer:coarse)").matches && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: document.title });
+        return;
+      }
+    } catch (e) { if (e && e.name === "AbortError") return; }
+    download(blob, name);
+    toast("File " + name + " terunduh.");
+  });
+
+  /* ---------- decorations ---------- */
+  (function wave() {
+    const W = 100, H = 141.42, m = 4.5, amp = 1.1, len = 6.2;
+    const pts = [];
+    const edge = (x1, y1, x2, y2, nx, ny) => {
+      const L = Math.hypot(x2 - x1, y2 - y1), n = Math.max(2, Math.round(L / len)), steps = n * 12;
+      for (let i = 0; i < steps; i++) {
+        const t = i / steps, o = Math.sin(t * n * Math.PI * 2) * amp;
+        pts.push([x1 + (x2 - x1) * t + nx * o, y1 + (y2 - y1) * t + ny * o]);
+      }
+    };
+    edge(m, m, W - m, m, 0, -1); edge(W - m, m, W - m, H - m, 1, 0);
+    edge(W - m, H - m, m, H - m, 0, 1); edge(m, H - m, m, m, -1, 0);
+    const wp = $("#wave-path"); if (wp) wp.setAttribute("d", "M" + pts.map(p => p[0].toFixed(2) + " " + p[1].toFixed(2)).join("L") + "Z");
+    const burst = [], k = 14;
+    for (let i = 0; i < k * 2; i++) { const r = i % 2 ? 30 : 50, a = Math.PI * i / k; burst.push((50 + r * Math.cos(a)).toFixed(1) + "% " + (50 + r * Math.sin(a)).toFixed(1) + "%"); }
+    const bu = $("#burst"); if (bu) bu.style.clipPath = "polygon(" + burst.join(",") + ")";
+  })();
+
+  /* ---------- boot ---------- */
+  (async () => {
+    if (embedded && embedded.sid) storeKey = "shared-" + embedded.sid;
+    const stored = await dbGet(storeKey);
+    state = Object.assign(state, embedded || {}, stored || {});
+    state.texts = state.texts || {}; state.photos = state.photos || {}; state.checks = state.checks || {};
+    if (!stored && embedded) state.edit = false;
+    renderAll();
+    layout();
+    setEdit(!!state.edit);
+    statusEl.textContent = stored ? "Tersimpan" : "";
+  })();
+})();
+</script>
+</body>
+</html>
