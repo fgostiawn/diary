@@ -9,10 +9,11 @@
 .page b{font-weight:600}
 .rc-shade::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none}
 
-/* 1 · sampul */
-.rc-cover h2{position:absolute;left:0;right:0;top:29cqw;text-align:center;font:400 12.4cqw/.98 var(--f-script);color:#f8f1ea;text-shadow:0 .35cqw .6cqw rgba(0,0,0,.5)}
-.rc-cover .ph{position:absolute;left:17cqw;width:67cqw;top:55cqw;aspect-ratio:3/2;border:.8cqw solid #efe8dc;box-shadow:0 .8cqw 2cqw rgba(0,0,0,.4)}
-.rc-cover .cap{position:absolute;left:0;right:0;top:104cqw;text-align:center;font:300 2.7cqw/1.45 "Jost",sans-serif;letter-spacing:.02em}
+/* 1 · sampul — latar dari Canva (daun ukiran), teks & foto tetap bisa diedit */
+.rc-cover{background:url("asset:cover-bg.jpg") center/100% 100% no-repeat,#5a1519}
+.rc-cover h2{position:absolute;left:0;right:0;top:11cqw;text-align:center;font:400 13.6cqw/.92 var(--f-script);color:#f6e9ce;text-shadow:0 .3cqw .5cqw rgba(0,0,0,.55),0 0 1.2cqw rgba(0,0,0,.25)}
+.rc-cover .ph{position:absolute;left:11.48cqw;width:77cqw;top:51.17cqw;height:53.16cqw;border:.45cqw solid #efe3cb;box-shadow:0 .4cqw 1.2cqw rgba(0,0,0,.35)}
+.rc-cover .cap{position:absolute;left:0;right:0;top:108cqw;text-align:center;font:300 2.55cqw/1.9 "Jost",sans-serif;letter-spacing:.15em;color:#f6e9ce}
 
 /* 2 · kutipan */
 .rc-quote p{position:absolute;left:14cqw;right:14cqw;top:60cqw;text-align:center;font:300 2.95cqw/1.68 "Jost",sans-serif}

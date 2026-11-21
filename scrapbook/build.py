@@ -4,7 +4,7 @@
 Jalankan: python3 scrapbook/build.py
 Setiap desain berisi meta.json, style.css, dan pages.html. Mesin bersama ada di src/engine.css dan src/engine.js.
 """
-import json, pathlib, html
+import json, pathlib, html, base64, re, mimetypes
 
 ROOT = pathlib.Path(__file__).resolve().parent
 SRC = ROOT / "src"
@@ -14,6 +14,15 @@ OUT.mkdir(exist_ok=True)
 shell = (SRC / "shell.html").read_text()
 engine_css = (SRC / "engine.css").read_text().rstrip()
 engine_js = (SRC / "engine.js").read_text().rstrip()
+
+def inline_assets(css, d):
+    """url("asset:nama.jpg") -> data URI, supaya file tetap mandiri (bisa dibagikan sebagai satu file)."""
+    def rep(m):
+        f = d / "assets" / m.group(1)
+        mime = mimetypes.guess_type(f.name)[0] or "application/octet-stream"
+        return 'url("data:%s;base64,%s")' % (mime, base64.b64encode(f.read_bytes()).decode())
+    return re.sub(r'url\("asset:([^"]+)"\)', rep, css)
+
 
 for d in sorted((SRC / "designs").iterdir()):
     if not d.is_dir():
@@ -31,7 +40,7 @@ for d in sorted((SRC / "designs").iterdir()):
         "{{DESC}}": html.escape(meta.get("desc", "")),
         "{{FONTS}}": fonts,
         "{{ENGINE_CSS}}": engine_css,
-        "{{DESIGN_CSS}}": (d / "style.css").read_text().rstrip(),
+        "{{DESIGN_CSS}}": inline_assets((d / "style.css").read_text().rstrip(), d),
         "{{PAGES}}": (d / "pages.html").read_text().rstrip(),
         "{{ENGINE_JS}}": engine_js,
     }.items():
