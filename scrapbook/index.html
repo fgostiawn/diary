@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zine Kita</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Pilihan desain scrapbook digital siap cetak A4.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Montserrat:wght@400;500;600;700&family=Pinyon+Script&display=swap">
+<style>
+/* Layout: meja denim bertitik; header naskah + filter kategori; kartu desain dalam grid yang turun ke 1 kolom di HP. */
+:root{
+  --desk:#1c2f4d; --desk-2:#16263f; --dot:rgba(255,255,255,.78);
+  --cream:#f4ecdd; --muted:rgba(244,236,221,.62); --butter:#fbf3b5; --ink:#1a2a45; --card:#f8f3ea; --wine:#6b1a17;
+  --f-script:"Pinyon Script","Great Vibes",cursive;
+  --f-display:"Cormorant Garamond",Georgia,serif;
+  --f-sans:"Montserrat","Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--desk)}
+body{
+  margin:0;min-height:100vh;color:var(--cream);font-family:var(--f-sans);
+  background:
+    radial-gradient(circle,var(--dot) 0 1.4px,transparent 2.1px) 0 0/92px 92px,
+    radial-gradient(circle,var(--dot) 0 1.4px,transparent 2.1px) 46px 46px/92px 92px,
+    var(--desk);
+}
+.wrap{max-width:1120px;margin:0 auto;padding-block:48px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+h1{margin:0;font:400 clamp(52px,10vw,92px)/1 var(--f-script);color:var(--butter);text-wrap:balance}
+.tag{font:500 clamp(17px,2.6vw,22px)/1 var(--f-display);color:#1f2f52;background:var(--butter);padding:6px 16px}
+.filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:34px 0 30px}
+.chip{font:600 13px/1 var(--f-sans);letter-spacing:.02em;color:var(--cream);background:rgba(16,28,49,.6);border:1px solid rgba(251,243,181,.38);border-radius:999px;padding:10px 16px;cursor:pointer}
+.chip:hover{background:rgba(251,243,181,.12)}
+.chip[aria-pressed="true"]{background:var(--butter);color:var(--ink);border-color:var(--butter)}
+.chip:focus-visible,.card:focus-visible{outline:2px solid var(--butter);outline-offset:3px}
+.chip small{font-weight:500;opacity:.7;margin-left:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,460px),1fr));gap:28px}
+.card{display:flex;flex-direction:column;min-width:0;background:var(--card);color:#2b1f19;text-decoration:none;box-shadow:0 18px 40px rgba(0,0,0,.4);transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-4px);box-shadow:0 24px 50px rgba(0,0,0,.5)}
+.card img{display:block;width:100%;aspect-ratio:1400/620;object-fit:cover;background:var(--desk-2)}
+.card .body{display:flex;flex-direction:column;gap:10px;padding:18px 20px 20px}
+.card .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.card h2{margin:0;font:400 38px/1.1 var(--f-script);color:var(--wine)}
+.card .meta{font:500 12px var(--f-sans);letter-spacing:.06em;text-transform:uppercase;color:#7a6658}
+.card p{margin:0;font:italic 400 18px/1.45 var(--f-display);color:#4a3a30}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font:600 11px/1 var(--f-sans);letter-spacing:.08em;text-transform:uppercase;padding:6px 9px;border:1px solid #d8c9b5;color:#6b4f3f}
+.sw{display:flex;gap:4px}
+.sw i{width:18px;height:18px;border-radius:50%;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.open{margin-top:4px;align-self:flex-start;font:600 13px/1 var(--f-sans);color:var(--ink);background:var(--butter);padding:11px 16px;border-radius:999px}
+.empty{grid-column:1/-1;text-align:center;font:italic 20px var(--f-display);color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Zine Kita</h1>
+    <div class="tag">pilih desain scrapbook</div>
+  </header>
+  <nav class="filters" id="filters" aria-label="Kategori desain"></nav>
+  <main class="grid" id="grid"></main>
+</div>
+<script>
+/* Daftar desain. Desain baru: buat src/designs/<id>/, jalankan build.py, buat pratinjau di preview/<id>.jpg, lalu tambahkan satu entri di sini. */
+const DESIGNS = [
+  {
+    id: "red-creme", title: "Red + Creme", pages: 14, paper: "A4 potret",
+    cats: ["Anniversary", "Moodboard"],
+    desc: "Merah marun, krem, dan biru baja: kalender, kolase hati, surat renda, playlist, dan moodboard.",
+    colors: ["#5e1619", "#ece3d2", "#4f7896", "#2b6b95"]
+  },
+  {
+    id: "zine-merah", title: "Zine Merah", pages: 20, paper: "A4 lanskap · zine lipat",
+    cats: ["Anniversary", "Zine"],
+    desc: "Zine bergaya majalah lama: surat, kuis pasangan, bucket list, soundtrack, dan 10 terima kasih.",
+    colors: ["#6b1a17", "#4b2f20", "#f4ecdd", "#2f6c9f"]
+  }
+];
+
+const grid = document.getElementById("grid");
+const filters = document.getElementById("filters");
+const cats = ["Semua", ...new Set(DESIGNS.flatMap(d => d.cats))];
+let active = "Semua";
+try { const saved = localStorage.getItem("zk-cat"); if (saved && cats.includes(saved)) active = saved; } catch (e) {}
+
+function renderFilters() {
+  filters.replaceChildren(...cats.map(c => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.setAttribute("aria-pressed", c === active);
+    const n = c === "Semua" ? DESIGNS.length : DESIGNS.filter(d => d.cats.includes(c)).length;
+    const s = document.createElement("small"); s.textContent = n;
+    b.append(c, s);
+    b.addEventListener("click", () => { active = c; try { localStorage.setItem("zk-cat", c); } catch (e) {} renderFilters(); renderGrid(); });
+    return b;
+  }));
+}
+function renderGrid() {
+  const list = DESIGNS.filter(d => active === "Semua" || d.cats.includes(active));
+  if (!list.length) { grid.innerHTML = '<p class="empty">Belum ada desain di kategori ini.</p>'; return; }
+  grid.replaceChildren(...list.map(d => {
+    const a = document.createElement("a");
+    a.className = "card"; a.href = "desain/" + d.id + ".html";
+    a.innerHTML =
+      '<img alt="" loading="lazy">' +
+      '<div class="body"><div class="row"><h2></h2><span class="meta"></span></div><p></p>' +
+      '<div class="row"><div class="tags"></div><div class="sw"></div></div><span class="open">Buka desain</span></div>';
+    const img = a.querySelector("img"); img.src = "preview/" + d.id + ".jpg"; img.alt = "Pratinjau " + d.title;
+    a.querySelector("h2").textContent = d.title;
+    a.querySelector(".meta").textContent = d.pages + " halaman · " + d.paper;
+    a.querySelector("p").textContent = d.desc;
+    a.querySelector(".tags").append(...d.cats.map(c => { const s = document.createElement("span"); s.textContent = c; return s; }));
+    a.querySelector(".sw").append(...d.colors.map(c => { const i = document.createElement("i"); i.style.background = c; return i; }));
+    return a;
+  }));
+}
+renderFilters(); renderGrid();
+</script>
+</body>
+</html>
