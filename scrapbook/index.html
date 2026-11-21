@@ -107,7 +107,26 @@ body.framed [data-top-only]{display:none}
 .ph-rm{position:absolute;top:5px;right:5px;z-index:4;width:26px;height:26px;border-radius:50%;border:0;padding:0;background:rgba(0,0,0,.62);color:#fff;font:700 17px/26px var(--f-sans);cursor:pointer}
 body:not(.editing) .edit-only{display:none!important}
 body.editing .ph{cursor:pointer}
-body.editing .ph.has{cursor:grab;touch-action:none}
+body.editing .ph.has{cursor:grab}
+.ph.grabbing{cursor:grabbing!important}
+.ph.panning{touch-action:none;cursor:move;box-shadow:inset 0 0 0 3px #f2c94c!important}
+.ph.drop{box-shadow:inset 0 0 0 3px #4a8be0!important}
+.ph.loading::after{content:"";position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:3px solid rgba(255,255,255,.5);border-top-color:#7c1d1a;animation:spin .8s linear infinite;z-index:5}
+@keyframes spin{to{transform:rotate(360deg)}}
+.menu{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;background:rgba(8,14,26,.55);padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.menu[hidden]{display:none}
+@media (min-width:700px){.menu{align-items:center}}
+.menu-card{width:min(420px,100%);display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:18px;background:#fbf7ef;color:#2b1f19;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.menu-title{font:400 32px/1 var(--f-script);color:#7c1d1a;text-align:center;padding:4px 0 8px}
+.mbtn{font:600 15px/1.2 var(--f-sans);padding:15px;border-radius:12px;border:1px solid #e4d9c9;background:#fff;color:#2b1f19;cursor:pointer}
+.mbtn:hover{background:#f6efe3}
+.mbtn:focus-visible{outline:2px solid #7c1d1a;outline-offset:2px}
+.mbtn.danger{color:#a3271f}
+.mbtn.ghost{background:transparent;border-color:transparent}
+.mbtn[hidden]{display:none}
+.pan-done{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:45;padding:13px 22px;font-size:14px;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.pan-done[hidden]{display:none}
+@media (prefers-reduced-motion:reduce){.ph.loading::after{animation-duration:2s}}
 body.editing .ph:hover{box-shadow:inset 0 0 0 2px rgba(80,140,230,.85)}
 body.editing [e]{outline:1px dashed transparent;outline-offset:2px;border-radius:2px;cursor:text}
 body.editing [e]:hover{outline-color:rgba(80,140,230,.7)}
@@ -322,7 +341,7 @@ body.editing [e]:focus{outline:1.5px solid #4a8be0}
 @media print{
   html,body{background:#fff!important}
   body::before{display:none}
-  .bar,.sheet-label,.toast,.edit-only,.ph-empty{display:none!important}
+  .bar,.sheet-label,.toast,.edit-only,.ph-empty,.menu,.pan-done{display:none!important}
   .book{display:block;padding:0}
   .sheet-wrap{display:block}
   .sheet{box-shadow:none;margin:0;overflow:hidden;break-after:page;page-break-after:always;max-width:none}
@@ -619,7 +638,19 @@ Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pe
 </main>
 
 <input type="file" id="file-one" accept="image/*" hidden>
+<input type="file" id="file-cam" accept="image/*" capture="environment" hidden>
 <input type="file" id="file-many" accept="image/*" multiple hidden>
+<div class="menu" id="menu" hidden>
+  <div class="menu-card" role="dialog" aria-modal="true" aria-labelledby="menu-title">
+    <p class="menu-title" id="menu-title">Foto</p>
+    <button class="mbtn" type="button" data-act="gallery">Pilih dari galeri</button>
+    <button class="mbtn" type="button" data-act="camera">Ambil dengan kamera</button>
+    <button class="mbtn" type="button" data-act="pan" data-has>Atur posisi foto</button>
+    <button class="mbtn danger" type="button" data-act="remove" data-has>Hapus foto</button>
+    <button class="mbtn ghost" type="button" data-act="cancel">Batal</button>
+  </div>
+</div>
+<button class="btn primary pan-done" id="pan-done" type="button" hidden>Selesai atur posisi</button>
 <div class="toast" id="toast" role="status"></div>
 
 <script id="sb-data" type="application/json">null</script>
@@ -740,6 +771,7 @@ Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pe
     document.body.classList.toggle("editing", on);
     $("#t-edit").setAttribute("aria-pressed", on);
     $("#t-edit").textContent = on ? "Selesai edit" : "Mode edit";
+    if (!on) { stopPan(); $("#menu").hidden = true; }
     texts.forEach(el => {
       if (on) {
         if (plainOnly === null) { el.contentEditable = "plaintext-only"; plainOnly = el.contentEditable === "plaintext-only"; }
@@ -768,36 +800,120 @@ Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pe
   });
 
   /* ---------- photos ---------- */
-  async function compress(file) {
-    const url = URL.createObjectURL(file);
-    try {
-      const img = new Image(); img.src = url; await img.decode();
-      const max = 1600, w = img.naturalWidth, h = img.naturalHeight, s = Math.min(1, max / Math.max(w, h));
-      const c = document.createElement("canvas"); c.width = Math.round(w * s); c.height = Math.round(h * s);
-      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      return c.toDataURL("image/jpeg", 0.85);
-    } finally { URL.revokeObjectURL(url); }
+  const isHeic = f => /image\/hei[cf]/i.test(f.type) || /\.hei[cf]$/i.test(f.name || "");
+  let heicLib = null;
+  function loadHeic() {
+    const urls = ["https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js", "https://unpkg.com/heic2any@0.0.4/dist/heic2any.min.js"];
+    const tryLoad = i => new Promise((res, rej) => {
+      if (i >= urls.length) { rej(new Error("heic")); return; }
+      const s = document.createElement("script");
+      s.src = urls[i];
+      s.onload = () => window.heic2any ? res(window.heic2any) : rej(new Error("heic"));
+      s.onerror = () => { s.remove(); tryLoad(i + 1).then(res, rej); };
+      document.head.append(s);
+    });
+    if (!heicLib) heicLib = tryLoad(0).catch(e => { heicLib = null; throw e; });
+    return heicLib;
   }
-  let target = null;
-  const fileOne = $("#file-one"), fileMany = $("#file-many");
-  function pick(ph) { target = ph; fileOne.value = ""; fileOne.click(); }
-  fileOne.addEventListener("change", async () => {
-    const f = fileOne.files[0]; if (!f || !target) return;
-    try { state.photos[target.dataset.k] = { src: await compress(f), x: 50, y: 50 }; renderPhoto(target); save(); }
-    catch (e) { toast("Foto ini tidak bisa dibuka. Coba format JPG atau PNG."); }
-  });
-  $("#b-many").addEventListener("click", () => { fileMany.value = ""; fileMany.click(); });
-  fileMany.addEventListener("change", async () => {
-    const files = Array.from(fileMany.files);
-    const empty = photos.filter(ph => !state.photos[ph.dataset.k]);
-    let n = 0;
-    for (const f of files) {
-      const ph = empty[n]; if (!ph) break;
-      try { state.photos[ph.dataset.k] = { src: await compress(f), x: 50, y: 50 }; renderPhoto(ph); n++; } catch (e) {}
+  async function heicToJpeg(file) {
+    const conv = await loadHeic();
+    const out = await conv({ blob: file, toType: "image/jpeg", quality: 0.9 });
+    return Array.isArray(out) ? out[0] : out;
+  }
+  async function draw(blob) {
+    const max = 1600;
+    let src = null, w = 0, h = 0, url = null;
+    try {
+      if (window.createImageBitmap) {
+        try { src = await createImageBitmap(blob, { imageOrientation: "from-image" }); w = src.width; h = src.height; } catch (e) { src = null; }
+      }
+      if (!src) {
+        url = URL.createObjectURL(blob);
+        const img = new Image(); img.src = url; await img.decode();
+        src = img; w = img.naturalWidth; h = img.naturalHeight;
+      }
+      if (!w || !h) throw new Error("empty");
+      const s = Math.min(1, max / Math.max(w, h));
+      const c = document.createElement("canvas"); c.width = Math.round(w * s); c.height = Math.round(h * s);
+      const ctx = c.getContext("2d");
+      ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(src, 0, 0, c.width, c.height);
+      if (src.close) src.close();
+      return c.toDataURL("image/jpeg", 0.85);
+    } finally { if (url) URL.revokeObjectURL(url); }
+  }
+  async function compress(file) {
+    if (isHeic(file)) {
+      try { return await draw(file); } catch (e) { return await draw(await heicToJpeg(file)); }
     }
+    try { return await draw(file); }
+    catch (e) { return await draw(await heicToJpeg(file)); }
+  }
+  const imageFiles = list => Array.from(list || []).filter(f => /^image\//.test(f.type) || isHeic(f) || !f.type);
+
+  let busy = false;
+  async function placeFiles(files, first) {
+    files = imageFiles(files);
+    if (!files.length) return;
+    if (busy) { toast("Tunggu, foto sebelumnya masih diproses."); return; }
+    busy = true;
+    const empties = photos.filter(ph => ph !== first && !state.photos[ph.dataset.k]);
+    const targets = first ? [first, ...empties] : empties;
+    let n = 0, failed = 0, i = 0;
+    for (const f of files) {
+      const ph = targets[i]; if (!ph) break;
+      statusEl.textContent = "Memproses foto " + (n + failed + 1) + "/" + Math.min(files.length, targets.length) + "…";
+      ph.classList.add("loading");
+      try { state.photos[ph.dataset.k] = { src: await compress(f), x: 50, y: 50 }; renderPhoto(ph); n++; i++; }
+      catch (e) { failed++; }
+      ph.classList.remove("loading");
+    }
+    busy = false;
     save();
-    toast(n ? n + " foto dimasukkan ke bingkai kosong." : "Tidak ada bingkai kosong tersisa.");
+    const left = files.length - n - failed;
+    if (failed) toast(failed + " foto tidak bisa dibuka. Foto HEIC perlu koneksi internet; atau simpan ulang sebagai JPG.");
+    else if (left > 0) toast(n + " foto dimasukkan. " + left + " foto tidak muat, semua bingkai sudah terisi.");
+    else if (files.length > 1) toast(n + " foto dimasukkan.");
+  }
+
+  let target = null, lastPh = null;
+  const fileOne = $("#file-one"), fileCam = $("#file-cam"), fileMany = $("#file-many");
+  const openInput = inp => { inp.value = ""; inp.click(); };
+  fileOne.addEventListener("change", () => placeFiles(fileOne.files, target));
+  fileCam.addEventListener("change", () => placeFiles(fileCam.files, target));
+  fileMany.addEventListener("change", () => placeFiles(fileMany.files, null));
+  $("#b-many").addEventListener("click", () => openInput(fileMany));
+
+  /* menu */
+  const menu = $("#menu");
+  function openMenu(ph) {
+    target = lastPh = ph;
+    const has = !!state.photos[ph.dataset.k];
+    $$("[data-has]", menu).forEach(b => { b.hidden = !has; });
+    menu.hidden = false;
+    $(".mbtn", menu).focus();
+  }
+  function closeMenu() { menu.hidden = true; if (target) try { target.focus({ preventScroll: true }); } catch (e) {} }
+  menu.addEventListener("click", e => {
+    if (e.target === menu) { closeMenu(); return; }
+    const b = e.target.closest("[data-act]"); if (!b) return;
+    const act = b.dataset.act, ph = target;
+    menu.hidden = true;
+    if (act === "gallery") openInput(fileOne);
+    else if (act === "camera") openInput(fileCam);
+    else if (act === "pan") startPan(ph);
+    else if (act === "remove") { delete state.photos[ph.dataset.k]; renderPhoto(ph); save(); }
   });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") { if (!menu.hidden) closeMenu(); else if (panPh) stopPan(); }
+  });
+
+  /* pan mode (touch needs it so the page still scrolls) */
+  let panPh = null;
+  const panDone = $("#pan-done");
+  function startPan(ph) { stopPan(); panPh = ph; ph.classList.add("panning"); panDone.hidden = false; }
+  function stopPan() { if (panPh) panPh.classList.remove("panning"); panPh = null; panDone.hidden = true; }
+  panDone.addEventListener("click", () => { stopPan(); save(); });
 
   let drag = null;
   book.addEventListener("pointerdown", e => {
@@ -806,15 +922,18 @@ Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pe
     if (!ph || e.target.closest(".ph-rm")) return;
     const img = ph.querySelector("img");
     const d = state.photos[ph.dataset.k];
-    drag = { ph, img, x: e.clientX, y: e.clientY, moved: false, sx: d ? d.x ?? 50 : 50, sy: d ? d.y ?? 50 : 50 };
-    if (img) { e.preventDefault(); try { ph.setPointerCapture(e.pointerId); } catch (_) {} ph.style.cursor = "grabbing"; }
+    const canPan = !!img && (e.pointerType === "mouse" || ph === panPh);
+    drag = { ph, img, canPan, x: e.clientX, y: e.clientY, moved: false, sx: d ? d.x ?? 50 : 50, sy: d ? d.y ?? 50 : 50 };
+    if (canPan) { e.preventDefault(); try { ph.setPointerCapture(e.pointerId); } catch (_) {} }
   });
   book.addEventListener("pointermove", e => {
-    if (!drag || !drag.img) return;
+    if (!drag) return;
     const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if (!drag.moved && Math.hypot(dx, dy) < 5) return;
+    if (!drag.moved && Math.hypot(dx, dy) < 6) return;
     drag.moved = true;
+    if (!drag.canPan) return;
     const { ph, img } = drag;
+    ph.classList.add("grabbing");
     const fw = ph.clientWidth, fh = ph.clientHeight, nw = img.naturalWidth || 1, nh = img.naturalHeight || 1;
     const s = Math.max(fw / nw, fh / nh), ox = nw * s - fw, oy = nh * s - fh;
     const clamp = v => Math.max(0, Math.min(100, v));
@@ -826,19 +945,56 @@ Aku nggak tahu bab berikutnya bakal seperti apa. Tapi aku mau kita menulisnya pe
   function endDrag(e) {
     if (!drag) return;
     const dd = drag; drag = null;
-    dd.ph.style.cursor = "";
-    if (dd.moved) { save(); return; }
-    if (e.type === "pointerup" && e.target.closest(".ph") === dd.ph) pick(dd.ph);
+    dd.ph.classList.remove("grabbing");
+    if (dd.moved) { suppressUntil = Date.now() + 400; if (dd.canPan) save(); }
   }
+  let suppressUntil = 0;
   book.addEventListener("pointerup", endDrag);
   book.addEventListener("pointercancel", endDrag);
   book.addEventListener("keydown", e => {
     const ph = e.target.closest(".ph");
-    if (state.edit && ph && e.target === ph && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pick(ph); }
+    if (state.edit && ph && e.target === ph && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openMenu(ph); }
   });
+  book.addEventListener("focusin", e => { const ph = e.target.closest && e.target.closest(".ph"); if (ph) lastPh = ph; });
+
+  /* drag & drop files */
+  let dropPh = null;
+  const hasFiles = e => e.dataTransfer && Array.from(e.dataTransfer.types || []).includes("Files");
+  book.addEventListener("dragover", e => {
+    if (!state.edit || !hasFiles(e)) return;
+    e.preventDefault(); e.dataTransfer.dropEffect = "copy";
+    const ph = e.target.closest(".ph");
+    if (ph !== dropPh) { if (dropPh) dropPh.classList.remove("drop"); dropPh = ph; if (ph) ph.classList.add("drop"); }
+  });
+  book.addEventListener("dragleave", e => { if (dropPh && !book.contains(e.relatedTarget)) { dropPh.classList.remove("drop"); dropPh = null; } });
+  book.addEventListener("drop", e => {
+    if (!state.edit || !hasFiles(e)) return;
+    e.preventDefault();
+    const ph = e.target.closest(".ph");
+    if (dropPh) dropPh.classList.remove("drop"); dropPh = null;
+    placeFiles(e.dataTransfer.files, ph);
+  });
+  window.addEventListener("dragover", e => { if (hasFiles(e)) e.preventDefault(); });
+  window.addEventListener("drop", e => { if (hasFiles(e) && !book.contains(e.target)) { e.preventDefault(); if (state.edit) placeFiles(e.dataTransfer.files, null); } });
+
+  /* paste an image (Ctrl/Cmd+V) */
+  document.addEventListener("paste", e => {
+    if (!state.edit || !e.clipboardData) return;
+    const files = Array.from(e.clipboardData.items || []).filter(it => it.kind === "file" && /^image\//.test(it.type)).map(it => it.getAsFile()).filter(Boolean);
+    if (!files.length) return;
+    e.preventDefault(); e.stopPropagation();
+    placeFiles(files, lastPh && document.contains(lastPh) ? lastPh : null);
+  }, true);
+
   book.addEventListener("click", e => {
     const rm = e.target.closest(".ph-rm");
-    if (rm) { const ph = rm.closest(".ph"); delete state.photos[ph.dataset.k]; renderPhoto(ph); save(); return; }
+    if (rm) { const ph = rm.closest(".ph"); if (ph === panPh) stopPan(); delete state.photos[ph.dataset.k]; renderPhoto(ph); save(); return; }
+    const ph = e.target.closest(".ph");
+    if (ph && state.edit) {
+      if (Date.now() < suppressUntil || ph === panPh) return;
+      if (panPh) { stopPan(); save(); }
+      openMenu(ph); return;
+    }
     const ck = e.target.closest(".ck");
     if (ck) { const k = ck.dataset.k; state.checks[k] = !state.checks[k]; ck.classList.toggle("on", state.checks[k]); ck.setAttribute("aria-pressed", state.checks[k]); save(); }
   });

@@ -25,7 +25,7 @@ View your app in AI Studio: https://ai.studio/apps/67190f27-898e-4e3e-bcc3-18a1a
 `scrapbook/index.html` adalah scrapbook 20 halaman bertema anniversary yang berjalan langsung di browser, tanpa instalasi.
 
 1. Buka `scrapbook/index.html` di Chrome, Edge, atau Safari.
-2. **Mode edit**: klik tulisan untuk mengubah, klik bingkai untuk memilih foto, geser foto untuk mengatur posisinya. **Isi banyak foto** mengisi semua bingkai kosong sekaligus. Semua tersimpan otomatis di browser.
+2. **Mode edit**: klik tulisan untuk mengubah. Ketuk bingkai foto untuk membuka menu: **Pilih dari galeri**, **Ambil dengan kamera**, **Atur posisi foto**, atau **Hapus foto**. **Isi banyak foto** memilih banyak foto sekaligus dari galeri HP dan mengisi bingkai kosong berurutan. Di laptop, foto juga bisa diseret ke bingkai atau ditempel dengan Ctrl/Cmd+V. Foto HEIC dari iPhone dikonversi otomatis (butuh internet). Semua tersimpan otomatis di browser.
 3. Pilih **Lanskap** (2 halaman per lembar A4, bisa dilipat jadi zine) atau **Potret** (1 halaman per lembar A4).
 4. **Cetak / PDF**: pilih kertas A4, margin *None*, dan centang *Background graphics*.
 5. **Bagikan file**: mengunduh `zine-kita.html` berisi semua foto dan tulisan. Penerima cukup membukanya di browser.
