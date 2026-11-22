@@ -152,3 +152,15 @@ body.editing [e]:focus{outline:1.5px solid #4a8be0}
   body.editing .ph:hover,body.editing [e]{outline:none!important;box-shadow:none}
   *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* tombol tambah/hapus halaman (hanya mode edit, tidak ikut tercetak) */
+.pg-tools{position:absolute;top:8px;right:8px;z-index:30;display:flex;gap:6px}
+.pg-btn{font:600 12px/1 var(--f-sans);padding:8px 11px;border-radius:999px;border:0;background:rgba(16,28,49,.86);color:#fbf3b5;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.pg-btn:hover{background:rgba(16,28,49,1)}
+.pg-btn.del{color:#ffd2c8}
+.pg-btn.armed{background:#a3271f;color:#fff}
+.pg-btn:focus-visible{outline:2px solid #fbf3b5;outline-offset:2px}
+.menu-card.pg-menu{max-height:min(80vh,640px)}
+.pg-list{display:flex;flex-direction:column;gap:6px;overflow-y:auto;min-height:0;flex:1}
+.pg-opt{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 14px}
+.pg-n{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:50%;background:#efe6d6;color:#6b1a17;font:700 12px var(--f-sans)}
+
