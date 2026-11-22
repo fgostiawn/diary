@@ -190,3 +190,8 @@
 .rc-mood .quiet{text-shadow:0 .2cqw .8cqw rgba(5,12,28,.95),0 0 1.6cqw rgba(5,12,28,.8)}
 .rc-back .made{text-shadow:0 .2cqw .6cqw rgba(5,12,28,.9)}
 .page .ph.bg:not(.has),.rc-mood .upper>.ph:not(.has){background:transparent}
+
+/* stiker bergambar (latar sudah dihapus) */
+.rc-sticker{position:absolute;z-index:4;pointer-events:none;background:center/contain no-repeat;filter:drop-shadow(0 .5cqw .8cqw rgba(10,20,40,.3))}
+.rc-sticker.flower{aspect-ratio:382/392;background-image:url("asset:flower.webp")}
+.rc-sticker.butterfly{aspect-ratio:560/454;background-image:url("asset:butterfly.webp")}
