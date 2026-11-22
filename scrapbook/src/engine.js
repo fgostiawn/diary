@@ -6,22 +6,37 @@
   const DESIGN = document.documentElement.dataset.design || "zine-merah";
   const DEF_MODE = document.documentElement.dataset.mode === "port" ? "port" : "land";
   const book = $("#book");
-  const pages = $$(".page", book);
+  /* Setiap halaman di HTML adalah templat. Urutan & salinan halaman disimpan di state.pages. */
+  const TPL = new Map(), TPL_ORDER = [];
+  $$(".page", book).forEach(p => { TPL.set(p.dataset.id, p.cloneNode(true)); TPL_ORDER.push(p.dataset.id); book.removeChild(p); });
+  const defaultPages = () => TPL_ORDER.map(id => ({ tpl: id, uid: id }));
+  let pages = [];
 
   let framed = false;
   try { framed = window.self !== window.top; } catch (e) { framed = true; }
   if (framed) document.body.classList.add("framed");
 
   /* ---------- keys & defaults ---------- */
-  const defaults = new Map();
-  const texts = [], photos = [], checks = [];
+  let defaults = new Map();
+  let texts = [], photos = [], checks = [];
   const tidy = s => s.replace(/\r/g, "").replace(/[ \t]+\n/g, "\n").replace(/\n[ \t]+/g, "\n").trim();
-  pages.forEach(p => {
-    const id = p.dataset.id;
-    $$("[e]", p).forEach((el, i) => { el.dataset.k = id + "-t" + i; const t = tidy(el.textContent); el.textContent = t; defaults.set(el, t); texts.push(el); });
-    $$(".ph", p).forEach((el, i) => { el.dataset.k = id + "-p" + i; photos.push(el); });
-    $$(".ck", p).forEach((el, i) => { el.dataset.k = id + "-c" + i; checks.push(el); });
-  });
+  function buildPages() {
+    defaults = new Map(); texts = []; photos = []; checks = [];
+    pages = state.pages.filter(x => TPL.has(x.tpl)).map(x => {
+      const p = TPL.get(x.tpl).cloneNode(true);
+      const id = x.uid;
+      p.dataset.uid = id;
+      $$("[e]", p).forEach((el, i) => { el.dataset.k = id + "-t" + i; const t = tidy(el.textContent); el.textContent = t; defaults.set(el, t); texts.push(el); });
+      $$(".ph", p).forEach((el, i) => { el.dataset.k = id + "-p" + i; photos.push(el); });
+      $$(".ck", p).forEach((el, i) => { el.dataset.k = id + "-c" + i; checks.push(el); });
+      const tools = document.createElement("div");
+      tools.className = "pg-tools edit-only";
+      tools.innerHTML = '<button type="button" class="pg-btn" data-pg="add">+ Halaman</button><button type="button" class="pg-btn del" data-pg="del">Hapus</button>';
+      p.append(tools);
+      return p;
+    });
+    decorate();
+  }
 
   /* ---------- storage ---------- */
   function openDb() {
@@ -371,8 +386,8 @@
       return;
     }
     clearTimeout(resetArmed); resetArmed = null; resetBtn.textContent = "Reset";
-    state.texts = {}; state.photos = {}; state.checks = {};
-    renderAll(); save(); toast("Semua foto dan tulisan kembali ke awal.");
+    state.texts = {}; state.photos = {}; state.checks = {}; state.pages = defaultPages();
+    rebuild(); save(); toast("Semua halaman, foto, dan tulisan kembali ke awal.");
   });
 
   function download(blob, name) {
@@ -402,7 +417,7 @@
   });
 
   /* ---------- decorations ---------- */
-  (function wave() {
+  function decorate() {
     const W = 100, H = 141.42, m = 4.5, amp = 1.1, len = 6.2;
     const pts = [];
     const edge = (x1, y1, x2, y2, nx, ny) => {
@@ -414,11 +429,60 @@
     };
     edge(m, m, W - m, m, 0, -1); edge(W - m, m, W - m, H - m, 1, 0);
     edge(W - m, H - m, m, H - m, 0, 1); edge(m, H - m, m, m, -1, 0);
-    const wp = $("#wave-path"); if (wp) wp.setAttribute("d", "M" + pts.map(p => p[0].toFixed(2) + " " + p[1].toFixed(2)).join("L") + "Z");
+    const d = "M" + pts.map(p => p[0].toFixed(2) + " " + p[1].toFixed(2)).join("L") + "Z";
+    pages.forEach(pg => $$(".wave path", pg).forEach(wp => wp.setAttribute("d", d)));
     const burst = [], k = 14;
     for (let i = 0; i < k * 2; i++) { const r = i % 2 ? 30 : 50, a = Math.PI * i / k; burst.push((50 + r * Math.cos(a)).toFixed(1) + "% " + (50 + r * Math.sin(a)).toFixed(1) + "%"); }
-    const bu = $("#burst"); if (bu) bu.style.clipPath = "polygon(" + burst.join(",") + ")";
-  })();
+    pages.forEach(pg => $$(".burst", pg).forEach(bu => { bu.style.clipPath = "polygon(" + burst.join(",") + ")"; }));
+  }
+
+  /* ---------- tambah & hapus halaman ---------- */
+  function rebuild() { buildPages(); renderAll(); layout(); setEdit(!!state.edit); }
+  const pgMenu = document.createElement("div");
+  pgMenu.className = "menu"; pgMenu.hidden = true;
+  pgMenu.innerHTML = '<div class="menu-card pg-menu" role="dialog" aria-modal="true" aria-labelledby="pg-menu-title"><p class="menu-title" id="pg-menu-title">Tambah halaman</p><div class="pg-list"></div><button class="mbtn ghost" type="button" data-cancel>Batal</button></div>';
+  document.body.append(pgMenu);
+  const pgList = $(".pg-list", pgMenu);
+  TPL_ORDER.forEach((id, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "mbtn pg-opt"; b.dataset.tpl = id;
+    const n = document.createElement("span"); n.className = "pg-n"; n.textContent = i + 1;
+    b.append(n, TPL.get(id).dataset.label || id);
+    pgList.append(b);
+  });
+  let pgAfter = null;
+  pgMenu.addEventListener("click", e => {
+    if (e.target === pgMenu || e.target.closest("[data-cancel]")) { pgMenu.hidden = true; return; }
+    const b = e.target.closest("[data-tpl]"); if (!b) return;
+    pgMenu.hidden = true;
+    const at = state.pages.findIndex(x => x.uid === pgAfter);
+    const uid = b.dataset.tpl + "~" + newId();
+    state.pages.splice(at < 0 ? state.pages.length : at + 1, 0, { tpl: b.dataset.tpl, uid });
+    rebuild(); save();
+    const np = pages.find(p => p.dataset.uid === uid);
+    if (np) np.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+    toast("Halaman ditambahkan.");
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !pgMenu.hidden) pgMenu.hidden = true; });
+  let delArmed = null;
+  book.addEventListener("click", e => {
+    const b = e.target.closest(".pg-btn"); if (!b) return;
+    e.stopPropagation();
+    const uid = b.closest(".page").dataset.uid;
+    if (b.dataset.pg === "add") { pgAfter = uid; pgMenu.hidden = false; $(".pg-opt", pgMenu).focus(); return; }
+    if (state.pages.length <= 1) { toast("Minimal harus ada satu halaman."); return; }
+    if (!delArmed || delArmed.btn !== b) {
+      if (delArmed) { clearTimeout(delArmed.t); delArmed.btn.textContent = "Hapus"; delArmed.btn.classList.remove("armed"); }
+      b.textContent = "Yakin hapus?"; b.classList.add("armed");
+      delArmed = { btn: b, t: setTimeout(() => { b.textContent = "Hapus"; b.classList.remove("armed"); delArmed = null; }, 3500) };
+      return;
+    }
+    clearTimeout(delArmed.t); delArmed = null;
+    state.pages = state.pages.filter(x => x.uid !== uid);
+    const pre = uid + "-";
+    ["texts", "photos", "checks"].forEach(k => Object.keys(state[k]).forEach(key => { if (key.startsWith(pre)) delete state[k][key]; }));
+    rebuild(); save(); toast("Halaman dihapus.");
+  }, true);
 
   /* ---------- boot ---------- */
   (async () => {
@@ -426,10 +490,9 @@
     const stored = await dbGet(storeKey);
     state = Object.assign(state, embedded || {}, stored || {});
     state.texts = state.texts || {}; state.photos = state.photos || {}; state.checks = state.checks || {};
+    if (!Array.isArray(state.pages) || !state.pages.some(x => TPL.has(x.tpl))) state.pages = defaultPages();
     if (!stored && embedded) state.edit = false;
-    renderAll();
-    layout();
-    setEdit(!!state.edit);
+    rebuild();
     statusEl.textContent = stored ? "Tersimpan" : "";
   })();
 })();
