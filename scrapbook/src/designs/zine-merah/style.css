@@ -1,5 +1,5 @@
 /* 1 · pembuka */
-.pg-end{background:var(--grain),radial-gradient(120% 90% at 50% 40%,#611715,var(--wine-deep));background-blend-mode:overlay,normal;color:var(--cream)}
+.pg-end{background:radial-gradient(120% 90% at 50% 40%,rgba(60,8,8,.15),rgba(40,5,5,.55)),url("asset:suede.jpg") center/cover no-repeat,var(--wine-deep);color:var(--cream)}
 .pg-end .frame{position:absolute;inset:6cqw;border:1px solid rgba(244,236,221,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4cqw;padding:8cqw}
 .eyebrow{font:600 1.7cqw/1 var(--f-sans);letter-spacing:.32em;text-transform:uppercase;opacity:.8}
 .end-title{font:400 14cqw/1 var(--f-script)}
@@ -9,7 +9,7 @@
 .end-stamp{position:absolute;left:0;right:0;bottom:10cqw;text-align:center;font:1.6cqw var(--f-mono);letter-spacing:.3em;text-transform:uppercase;opacity:.7}
 
 /* 2 · sampul */
-.pg-cover{background:var(--grain),linear-gradient(160deg,#7a201c,#5c1513 60%,#4e1110);background-blend-mode:overlay,normal}
+.pg-cover{background:linear-gradient(160deg,rgba(255,255,255,.04),rgba(0,0,0,.12) 70%),url("asset:suede.jpg") center/cover no-repeat,#5c1513}
 .spine{position:absolute;top:0;bottom:0;left:0;width:4.6cqw;background:linear-gradient(90deg,rgba(0,0,0,.38),rgba(0,0,0,.12) 70%,rgba(255,255,255,.05));box-shadow:1px 0 0 rgba(0,0,0,.25)}
 .spine.r{left:auto;right:0;transform:scaleX(-1)}
 .cover-title{position:absolute;left:20cqw;top:41cqw;z-index:2;font:400 9cqw/1 var(--f-hand);color:#f6efe4;transform:rotate(-5deg);text-shadow:0 1px 6px rgba(0,0,0,.35)}
@@ -185,4 +185,6 @@
 .next-sign{position:absolute;right:8cqw;bottom:8cqw;font:5.2cqw/1 var(--f-hand);color:#7c1d1a}
 
 /* 20 · belakang */
-.pg-back{background:var(--grain),linear-gradient(200deg,#7a201c,#5c1513 60%,#4e1110);background-blend-mode:overlay,normal;color:#f1e4d6}
+.pg-back{background:linear-gradient(200deg,rgba(255,255,255,.04),rgba(0,0,0,.12) 70%),url("asset:suede.jpg") center/cover no-repeat,#5c1513;color:#f1e4d6}
+.bw-word{position:absolute;font:400 6.4cqw/1 var(--f-hand)}
+.made{position:absolute;right:6cqw;bottom:4.5cqw;font:italic 500 2.2cqw var(--f-display)}
