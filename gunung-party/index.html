@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0f1f1a">
+<title>Pesta Gunung</title>
+<style>
+:root{--bg:#0f1f1a;--card:#1b3329;--card2:#244536;--ink:#f2efe3;--mut:#9bb5a6;--acc:#ff9f1c;--red:#e5484d;--grn:#3ecf8e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{display:flex;flex-direction:column;max-width:560px;margin:0 auto;padding:16px;user-select:none}
+h1{margin:4px 0;font-size:28px}h2{margin:0 0 8px}
+.sub{color:var(--mut);margin:0 0 16px}
+.grid{display:grid;gap:12px}
+button{font:inherit;color:var(--ink);background:var(--card);border:0;border-radius:16px;padding:16px;font-size:18px;font-weight:600;text-align:left;cursor:pointer}
+button:active{transform:scale(.98);background:var(--card2)}
+button small{display:block;font-weight:400;color:var(--mut);font-size:14px;margin-top:4px}
+.pri{background:var(--acc);color:#1a1200;text-align:center}.pri:active{background:#e08a00}
+.ok{background:var(--grn);color:#02221a;text-align:center}.no{background:var(--red);text-align:center}
+.back{background:none;padding:8px 0;color:var(--mut);font-size:15px;width:auto}
+.box{background:var(--card);border-radius:20px;padding:24px;text-align:center;min-height:200px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px}
+.big{font-size:34px;font-weight:800;line-height:1.2}.mid{font-size:22px;line-height:1.35}
+.tag{font-size:13px;letter-spacing:.1em;color:var(--acc);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{background:var(--card2);padding:8px 12px;border-radius:99px;font-size:15px;display:flex;gap:8px;align-items:center}
+.chip b{color:var(--red);cursor:pointer}
+input{font:inherit;background:var(--card);border:2px solid var(--card2);color:var(--ink);padding:12px;border-radius:12px;flex:1;min-width:0}
+.row{display:flex;gap:8px}
+.timer{font-size:56px;font-weight:800;font-variant-numeric:tabular-nums}
+.shake{animation:sh .4s infinite}@keyframes sh{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.spacer{flex:1}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s), app=$('#app');
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let players=[];try{players=JSON.parse(localStorage.getItem('pg_players')||'[]')}catch(e){}
+const save=()=>{try{localStorage.setItem('pg_players',JSON.stringify(players))}catch(e){}};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p)}catch(e){}};
+let tick=null;const clr=()=>{clearInterval(tick);tick=null};
+
+const JUJUR=["Hal paling memalukan yang pernah kamu alami saat naik gunung?","Siapa di sini yang menurutmu paling lambat jalannya?","Kapan terakhir kali kamu menangis, dan kenapa?","Rahasia kecil yang belum pernah kamu ceritakan ke kelompok ini?","Siapa mantan yang masih suka kamu stalking?","Barang apa yang paling kamu sesali tidak dibawa ke sini?","Kebohongan terbesarmu ke orang tua?","Siapa di sini yang paling kamu percaya dan kenapa?","Kalau harus terjebak semalam di gunung dengan satu orang di sini, pilih siapa?","Kebiasaan jelekmu yang paling bikin orang kesal?","Pernah naksir teman satu tongkrongan ini? Siapa?","Apa ketakutan terbesarmu saat malam di hutan?","Hal teraneh yang pernah kamu makan?","Apa yang paling kamu rindukan dari rumah sekarang?","Sebutkan satu kelebihan dan satu kekurangan tiap orang di lingkaran ini."];
+const TANTANGAN=["Menirukan suara hewan hutan sampai ada yang ketawa.","Joget 30 detik tanpa musik.","Bilang 'aku sayang kamu' dengan gaya dramatis ke orang di kananmu.","Bercerita horor 1 menit dengan suara berbisik.","Pijat bahu orang di kirimu 30 detik.","Teriak nama gunung ini sekeras-kerasnya.","Jalan jongkok keliling tenda satu putaran.","Nyanyikan lagu nasional dengan gaya rapper.","Puji semua orang di sini dengan tulus, masing-masing satu kalimat.","Bicara pakai aksen daerah lain sampai giliran berikutnya.","Jadi pelayan: seduh minuman untuk satu orang pilihanmu.","Tirukan gaya jalan salah satu teman, biarkan yang lain menebak.","Push-up 10 kali (boleh dibantu duduk di punggungmu... kalau kuat).","Pura-pura jadi presenter berita cuaca gunung malam ini.","Tahan tawa 20 detik sementara semua orang menggodamu."];
+const KATA={"Alam & Gunung":["Tenda","Carrier","Puncak","Sunrise","Api unggun","Kabut","Jurang","Sleeping bag","Kompas","Senter","Headlamp","Trekking pole","Embun","Lembah","Air terjun","Edelweis","Pos peristirahatan","Kamp","Kompor mini","Nesting","Jas hujan","Kaos kaki basah","Pacet","Porter","Savana"],
+"Makanan":["Mie instan","Nasi goreng","Bakso","Sosis bakar","Kopi sachet","Roti sobek","Pisang goreng","Soto","Telur dadar","Martabak","Teh manis","Jagung bakar","Sambal","Es teh","Tempe goreng"],
+"Hewan & Benda":["Kucing","Gajah","Monyet","Ular","Ayam","Kodok","Kuda","Jerapah","Payung","Sepeda","Helikopter","Kasur","Cermin","Gitar","Kulkas","Motor","Topi","Sandal jepit","Handphone","Kereta api"],
+"Tokoh & Aktivitas":["Dokter","Polisi","Tukang ojek","Pocong","Kuntilanak","Superhero","Penyanyi dangdut","Atlet renang","Tukang cukur","Koki","Pemain bola","Pengantin","Guru killer","Bayi menangis","Orang kedinginan"]};
+const SPY_PLACES=["Tenda","Warung di pos","Puncak","Pinggir api unggun","Sungai","Hutan pinus","Pasar","Pantai","Rumah sakit","Bandara","Sekolah","Bioskop","Kapal laut","Kebun teh","Masjid"];
+
+function home(){clr();app.innerHTML=`
+<h1>⛰️ Pesta Gunung</h1><p class="sub">Game seru offline buat nongkrong di gunung. Satu HP, gantian saja.</p>
+<div class="grid">
+<button onclick="setup('jt')">🔥 Jujur atau Tantangan<small>Putar siapa yang kena, lalu pilih</small></button>
+<button onclick="setup('tk')">🎭 Tebak Kata<small>Peragakan kata, tim menebak, 60 detik</small></button>
+<button onclick="setup('spy')">🕵️ Mata-Mata<small>Satu orang tidak tahu lokasi. Temukan!</small></button>
+<button onclick="setup('bom')">💣 Bom Waktu<small>Oper HP, yang meledak kena hukuman</small></button>
+<button onclick="setup('roda')">🎯 Roda Nasib<small>Pilih korban, atau siapa yang masak/jaga api</small></button>
+</div><div class="spacer"></div><p class="sub" style="text-align:center;margin-top:16px">Pemain: ${players.length?players.join(', '):'belum diisi'} · <a href="#" onclick="setup(null);return false" style="color:var(--acc)">ubah</a></p>`}
+
+function setup(next){clr();
+ const min={jt:2,tk:2,spy:3,bom:2,roda:2}[next]||0;
+ const draw=()=>{$('#chips').innerHTML=players.map((p,i)=>`<span class="chip">${p.replace(/</g,'&lt;')}<b onclick="players.splice(${i},1);save();window.__d()">✕</b></span>`).join('')||'<span class="sub">Belum ada pemain</span>';
+  const go=$('#go');go.disabled=players.length<min;go.style.opacity=go.disabled?.4:1};
+ window.__d=draw;
+ app.innerHTML=`<button class="back" onclick="home()">← Kembali</button><h2>Siapa saja yang main?</h2><p class="sub">${next?'Minimal '+min+' orang.':'Tambah atau hapus pemain.'}</p>
+ <div class="row"><input id="nm" placeholder="Nama pemain" maxlength="14"><button class="pri" onclick="add()" style="padding:12px 18px">+</button></div>
+ <div class="chips" id="chips"></div><div class="spacer"></div><button id="go" class="pri" onclick="${next?`start('${next}')`:'home()'}">${next?'Mulai!':'Selesai'}</button>`;
+ window.add=()=>{const v=$('#nm').value.trim();if(v&&!players.includes(v)){players.push(v);save()}$('#nm').value='';draw();$('#nm').focus()};
+ $('#nm').onkeydown=e=>{if(e.key==='Enter')add()};draw()}
+
+function start(g){({jt:jtGame,tk:tkMenu,spy:spyGame,bom:bomGame,roda:rodaGame})[g]()}
+
+/* ---------- Jujur atau Tantangan ---------- */
+let jtOrder=[],jtI=0;
+function jtGame(){jtOrder=shuffle(players);jtI=0;jtTurn()}
+function jtTurn(){const p=jtOrder[jtI%jtOrder.length];
+ app.innerHTML=`<button class="back" onclick="home()">← Menu</button>
+ <div class="box"><div class="tag">GILIRAN</div><div class="big">${p}</div><div class="sub">Pilih nasibmu</div></div><div class="spacer"></div>
+ <div class="row"><button class="ok" style="flex:1" onclick="jtShow('J')">Jujur</button><button class="no" style="flex:1" onclick="jtShow('T')">Tantangan</button></div>`}
+function jtShow(t){const p=jtOrder[jtI%jtOrder.length];const txt=rnd(t==='J'?JUJUR:TANTANGAN);
+ app.innerHTML=`<button class="back" onclick="home()">← Menu</button>
+ <div class="box"><div class="tag">${p.toUpperCase()} · ${t==='J'?'JUJUR':'TANTANGAN'}</div><div class="mid">${txt}</div></div><div class="spacer"></div>
+ <div class="grid"><button onclick="jtShow('${t}')">🔄 Ganti pertanyaan (minum / hukuman kecil)</button><button class="pri" onclick="jtI++;jtTurn()">Selesai → berikutnya</button></div>`}
+
+/* ---------- Tebak Kata ---------- */
+let tk={};
+function tkMenu(){app.innerHTML=`<button class="back" onclick="home()">← Menu</button><h2>Pilih kategori</h2><p class="sub">Pemegang HP memeragakan kata tanpa bicara.</p>
+<div class="grid">${Object.keys(KATA).map(k=>`<button onclick="tkStart('${k}')">${k}<small>${KATA[k].length} kata</small></button>`).join('')}
+<button onclick="tkStart('*')">🎲 Campur semua</button></div>`}
+function tkStart(k){const words=k==='*'?Object.values(KATA).flat():KATA[k];
+ tk={deck:shuffle(words),i:0,pi:0,order:shuffle(players),scores:Object.fromEntries(players.map(p=>[p,0]))};tkReady()}
+function tkReady(){clr();const p=tk.order[tk.pi%tk.order.length];tk.cur=0;tk.t=60;
+ app.innerHTML=`<button class="back" onclick="home()">← Menu</button><div class="box"><div class="tag">PEMERAGA</div><div class="big">${p}</div><div class="sub">Tim lain bersiap menebak. Tap saat siap.</div></div>
+ <div class="spacer"></div><button class="pri" onclick="tkRun()">Mulai 60 detik</button>
+ <p class="sub" style="text-align:center;margin-top:12px">${players.map(x=>x+': '+tk.scores[x]).join(' · ')}</p>`}
+function tkRun(){tk.t=60;tkDraw();tick=setInterval(()=>{tk.t--;const e=$('#tm');if(e)e.textContent=tk.t;if(tk.t<=5&&tk.t>0)buzz(60);if(tk.t<=0){clr();buzz([300,100,300]);tkEnd()}},1000)}
+function tkDraw(){const w=tk.deck[tk.i%tk.deck.length];
+ app.innerHTML=`<div class="timer" style="text-align:center" id="tm">${tk.t}</div><div class="box"><div class="big">${w}</div></div><div class="spacer"></div>
+ <div class="row"><button class="no" style="flex:1" onclick="tk.i++;tkDraw()">Lewati</button><button class="ok" style="flex:1" onclick="tk.cur++;tk.i++;buzz(40);tkDraw()">Benar ✓</button></div>`}
+function tkEnd(){const p=tk.order[tk.pi%tk.order.length];tk.scores[p]+=tk.cur;
+ app.innerHTML=`<div class="box"><div class="tag">WAKTU HABIS</div><div class="big">${tk.cur} kata benar</div><div class="mid">${p}</div></div><div class="spacer"></div>
+ <p class="sub" style="text-align:center">${players.map(x=>x+': '+tk.scores[x]).join(' · ')}</p><button class="pri" onclick="tk.pi++;tkReady()">Pemeraga berikutnya</button><button onclick="home()" style="margin-top:8px;text-align:center">Selesai</button>`}
+
+/* ---------- Mata-Mata ---------- */
+function spyGame(){const place=rnd(SPY_PLACES),spy=Math.floor(Math.random()*players.length);let i=0,shown=false;
+ const step=()=>{if(i>=players.length)return spyTalk(place,spy);shown=false;
+  app.innerHTML=`<div class="box"><div class="tag">PASS HP KE</div><div class="big">${players[i]}</div><div class="sub" id="hint">Pastikan hanya kamu yang melihat.</div></div><div class="spacer"></div><button class="pri" id="rv">Tap untuk melihat peran</button>`;
+  $('#rv').onclick=()=>{const b=$('#rv');if(!shown){shown=true;b.className='';b.style.background='var(--card2)';b.innerHTML=i===spy?'🕵️ KAMU MATA-MATA<small>Tebak lokasinya tanpa ketahuan. Tap untuk tutup.</small>':'📍 Lokasi: '+place+'<small>Tap untuk tutup, lalu oper HP.</small>'}else{i++;step()}}};
+ step()}
+function spyTalk(place,spy){let t=300;
+ const draw=()=>app.innerHTML=`<h2>Diskusi!</h2><p class="sub">Bergantian bertanya satu sama lain soal lokasi. Mata-mata menyamar. Tuduh bersama bila yakin.</p>
+ <div class="box"><div class="timer" id="tm">${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}</div></div><div class="spacer"></div>
+ <button class="no" onclick="clr();spyEnd(${spy},'${place}')" style="text-align:center">Buka kunci jawaban</button>`;
+ draw();tick=setInterval(()=>{t--;const e=$('#tm');if(e)e.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');if(t<=0){clr();buzz([300,100,300]);spyEnd(spy,place)}},1000)}
+function spyEnd(spy,place){app.innerHTML=`<div class="box"><div class="tag">MATA-MATANYA</div><div class="big">${players[spy]}</div><div class="sub">Lokasi: ${place}</div></div><div class="spacer"></div><button class="pri" onclick="spyGame()">Main lagi</button><button onclick="home()" style="margin-top:8px;text-align:center">Menu</button>`}
+
+/* ---------- Bom Waktu ---------- */
+function bomGame(){let who=0,total=(15+Math.random()*35)*1000,t0=Date.now(),dead=false;
+ const draw=()=>app.innerHTML=`<button class="back" onclick="clr();home()">← Menu</button><div class="box shake"><div class="tag">BOM ADA DI</div><div class="big">${players[who]}</div><div style="font-size:70px">💣</div></div><div class="spacer"></div><button class="pri" id="pass">Oper ke orang lain!</button>`;
+ draw();
+ const bind=()=>{const b=$('#pass');if(b)b.onclick=()=>{who=(who+1)%players.length;buzz(30);draw();bind()}};bind();
+ tick=setInterval(()=>{const rem=total-(Date.now()-t0);if(rem<=0&&!dead){dead=true;clr();buzz([500,100,500,100,800]);
+  app.innerHTML=`<div class="box"><div style="font-size:80px">💥</div><div class="big">${players[who]} meledak!</div><div class="mid">Hukuman: ${rnd(TANTANGAN)}</div></div><div class="spacer"></div><button class="pri" onclick="bomGame()">Ronde baru</button><button onclick="home()" style="margin-top:8px;text-align:center">Menu</button>`}
+  else if(rem<5000&&!dead)buzz(40)},400)}
+
+/* ---------- Roda Nasib ---------- */
+function rodaGame(){app.innerHTML=`<button class="back" onclick="clr();home()">← Menu</button><div class="box"><div class="tag">RODA NASIB</div><div class="big" id="rw">?</div></div><div class="spacer"></div>
+ <div class="grid"><input id="why" placeholder="Untuk apa? (cth: jaga api, cuci piring)" style="padding:14px"><button class="pri" onclick="spin()">Putar!</button></div>`}
+function spin(){clr();let n=0,max=22+Math.floor(Math.random()*10),d=70;const el=$('#rw');
+ const step=()=>{el.textContent=rnd(players);buzz(10);n++;if(n<max){d+=n>max-8?45:5;setTimeout(step,d)}else{el.style.color='var(--acc)';buzz(200);const w=$('#why').value.trim();if(w)el.insertAdjacentHTML('afterend',`<div class="mid">${w.replace(/</g,'&lt;')}</div>`)}};
+ el.style.color='';document.querySelectorAll('.box .mid').forEach(x=>x.remove());step()}
+
+home();
+</script>
+</body>
+</html>
